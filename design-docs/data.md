@@ -13,17 +13,21 @@
 - time_elapsed: `time`
 - use_hint: `bool`
 - id_game: `int:fk`
-- id_card: `int:fk`
+- id_question: `int:fk`
 
 ### Card
-- difficulty: `int`
+- image: `blob``
+- alt_text: `text`
+
+### Question
 - question_text: `text`
-- image: `text\url\blob``
+- difficulty: `int`
 - type: `enum`
 - id_answer: `int:fk
+- id_card: `int:fk`
 
 ### Answer
-- question_type: `enum`
+- answer_text: `text`
 - id_card: `int:fk`
 
 ### Diagram
