@@ -23,5 +23,149 @@ module.exports = {
         email: 'testtwo@example.net'
       }
     ];
+  },
+  createTestTurns() {
+    return [
+      {
+        id: 1,
+        roll: 8,
+        skip: false,
+        use_hint: false,
+        id_game: 1,
+        id_question: 1
+      },
+      {
+        id: 2,
+        skip: true,
+        use_hint: false,
+        id_game: 1,
+        id_question: 5
+      },
+      {
+        id: 3,
+        roll: 10,
+        skip: false,
+        use_hint: true,
+        id_game: 1,
+        id_question: 3
+      },
+      {
+        id: 4,
+        skip: false,
+        id_game: 1,
+        id_question: 4
+      },
+    ];
+  },
+  createTestCards() {
+    return [
+      {
+        id: 1,
+        alt_text: 'the letter alef with background',
+        id_question: 1,
+        id_answer: 1,
+        difficulty: 1
+      },
+      {
+        id: 2,
+        alt_text: 'the letter dales with background',
+        id_question: 1,
+        id_answer: 2,
+        difficulty: 1
+      },
+      {
+        id: 3,
+        alt_text: 'the letter gimel with background',
+        id_question: 1,
+        id_answer: 3,
+        difficulty: 1
+      },
+      {
+        id: 4,
+        alt_text: 'the letter hey with background',
+        id_question: 1,
+        id_answer: 4,
+        difficulty: 1
+      },
+      {
+        id: 5,
+        alt_text: 'the word "meynen" with background',
+        id_question: 2,
+        id_answer: 5,
+        difficulty: 2
+      },
+      {
+        id: 6,
+        alt_text: 'the word "geyn" with background',
+        id_question: 2,
+        id_answer: 6,
+        difficulty: 2
+      },
+      {
+        id: 7,
+        alt_text: 'the word "lernen" with background',
+        id_question: 2,
+        id_answer: 7,
+        difficulty: 2
+      },
+      {
+        id: 8,
+        alt_text: 'the word "shpiln" with background',
+        id_question: 2,
+        id_answer: 8,
+        difficulty: 2
+      },
+    ];
+
+  },
+  createTestQuestions() {
+    return [
+      {
+        id: 1,
+        question_text: 'what is the name of this letter'
+      },
+      {
+        id: 2,
+        question_text: 'what does this word mean?'
+      }
+    ];
+
+  },
+  createTestAnswers() {
+    return [
+      {
+        id: 1,
+        answer_text: 'alef'
+      },
+      {
+        id: 2,
+        answer_text: 'dales'
+      },
+      {
+        id: 3,
+        answer_text: 'gimel'
+      },
+      {
+        id: 4,
+        answer_text: 'hey'
+      },
+      {
+        id: 5,
+        answer_text: 'to think'
+      },
+      {
+        id: 6,
+        answer_text: 'to go'
+      },
+      {
+        id: 7,
+        answer_text: 'to learn'
+      },
+      {
+        id: 8,
+        answer_text: 'to play'
+      }
+    ];
+
   }
 };
