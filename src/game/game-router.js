@@ -28,5 +28,10 @@ gameRouter
     }
     catch (err) { next(err) }
   })
+  .get(async (req, res, next) => {
+    return res
+      .status(200)
+      .send();
+  })
 
 module.exports = gameRouter;
