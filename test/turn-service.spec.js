@@ -1,8 +1,7 @@
-const TurnService = require('../src/game/turn-service');
+// const TurnService = require('../src/game/turn-service');
 const TestHelpers = require('./test-helpers');
 const knex = require('knex');
 const { expect } = require('chai');
-const testHelpers = require('./test-helpers');
 
 describe('Game service object', () => {
   let db;
@@ -10,7 +9,8 @@ describe('Game service object', () => {
   const testGames = TestHelpers.createTestGames();
   const testCards = TestHelpers.createTestCards();
   const testQuestions = TestHelpers.createTestQuestions();
-  const testAnswers = testHelpers.createTestAnswers();
+  const testAnswers = TestHelpers.createTestAnswers();
+  const testTurns = TestHelpers.createTestTurns();
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
