@@ -16,12 +16,12 @@ gameRouter
       if(!hintLimit && !hintLimited) return res.status(400).send();
       if(hintLimited && hintLimit < 0) return res.status(400).send();
 
-
-      const newGameId = await GameService.createNewGame(db, 1, {
+      const usedId = 1; // for now, default value
+      const newGameId = await GameService.createNewGame(db, userId, {
         total_stages: gameLength,
         hint_limit: hintLimited ? true : false,
         max_hints: hintLimit
-      }) // for now, default to id_user = 1
+      })
       return res
         .status(201)
         .json({gameId: newGameId})
@@ -29,6 +29,7 @@ gameRouter
     catch (err) { next(err) }
   })
   .get(async (req, res, next) => {
+    const userId = 1 // for now, default value
     return res
       .status(200)
       .send();
