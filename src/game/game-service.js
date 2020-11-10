@@ -7,23 +7,14 @@ const createNewGame = async function (db, userId, newGame) {
 
 const getGameByUser = async function (db, userId) {
   const turns = await db
-    .select('turn.*')
+    .select('*')
     .from('game')
     .where('id_user', userId)
     .join('turn', function() { 
       this.on('turn.id_game', '=', 'game.id')
     })
-  const game = await db
-    .select('*')
-    .from('game')
-    .where('id_user', userId)
-    .first()
   
-  const result = {
-    game,
-    turns
-  }
-  return result;
+  return turns;
 }
 module.exports = {
   getGameByUser,
