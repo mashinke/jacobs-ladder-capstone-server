@@ -16,18 +16,19 @@ RESTFul API server. To learn more about the game, please visit the
 ### Game
 - max_hints: `int` or `null`
 - stage_size: `int`
-- no_of_stages: `int`
+- total_stages: `int`
 - ended: `bool`
 
 ### Turn
 - roll: `int` or `null`
+- skip: `bool`
 - time_elapsed: `time`
 - use_hint: `bool`
 - id_game: `int:fk`
 - id_question: `int:fk`
 
 ### Card
-- image: `blob``
+- image_url: `text`
 - alt_text: `text`
 
 ### Question
@@ -40,9 +41,6 @@ RESTFul API server. To learn more about the game, please visit the
 ### Answer
 - answer_text: `text`
 - id_card: `int:fk`
-
-### Diagram
-![data diagram](data-diagram.png)
 
 ## API Communication
 
