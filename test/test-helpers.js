@@ -36,6 +36,7 @@ module.exports = {
       },
       {
         id: 2,
+        roll: null,
         skip: true,
         use_hint: false,
         id_game: 1,
@@ -51,7 +52,9 @@ module.exports = {
       },
       {
         id: 4,
+        roll: null,
         skip: false,
+        use_hint: false,
         id_game: 1,
         id_card: 4
       },

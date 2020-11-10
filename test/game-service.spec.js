@@ -28,7 +28,7 @@ describe('Game service object', () => {
     return db.raw('truncate turn, card, question, answer, game, app_user restart identity cascade');
   });
   describe('getGameByUser', () => {
-    it('returns full and correct game object from db', async () => {
+    it('returns correct game object from db and associated turns', async () => {
       await TestHelpers.seedFixtures(
         db,
         testUsers,
@@ -39,9 +39,14 @@ describe('Game service object', () => {
         testTurns
       )
       const userId = testUsers[0].id;
-      const expected = testGames.filter(game => game.id === userId)[0];
+      const expected = {
+        game: testGames.filter(game => game.id_user === userId)[0]
+      }
+      expected.turns = testTurns.filter(turn => turn.id_game === expected.game.id)
+
       const actual = await GameService.getGameByUser(db, userId);
       expect(actual).to.eql(expected);
+
     });
   });
   describe('createNewGame', () => {
