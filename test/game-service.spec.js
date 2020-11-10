@@ -32,4 +32,21 @@ describe('Game service object', () => {
       expect(actual).to.eql(expected);
     });
   });
+  describe('createNewGame', () => {
+    it('creates game in db and returns object', async () => {
+      await db.into('app_user').insert(testUsers);
+      const userId = testUsers[0].id;
+      const newGame = {
+        total_stages: 6,
+        hint_limit: true,
+        max_hints: 3
+      }
+      const gameId = await GameService.createNewGame(db, userId, newGame);
+      const actual = await db('game')
+        .select('*')
+        .where('id', gameId)
+        .first();
+      expect(actual).to.include(newGame);
+    })
+  })
 });
