@@ -14,9 +14,10 @@ RESTFul API server. To learn more about the game, please visit the
 ### Gameplay
 
 ### Game
-- max_hints: `int` or `null`
 - stage_size: `int`
 - total_stages: `int`
+- hint_limit: `bool`
+- max_hints: `int` or `null`
 - ended: `bool`
 
 ### Turn
