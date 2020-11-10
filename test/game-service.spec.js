@@ -8,6 +8,10 @@ describe('Game service object', () => {
   let db;
   const testUsers = TestHelpers.createTestUsers();
   const testGames = TestHelpers.createTestGames();
+  const testCards = TestHelpers.createTestCards();
+  const testQuestions = TestHelpers.createTestQuestions();
+  const testAnswers = TestHelpers.createTestAnswers();
+  const testTurns = TestHelpers.createTestTurns();
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
@@ -15,20 +19,24 @@ describe('Game service object', () => {
     });
   });
   before('ensure test db is empty', () => {
-    return db.raw('truncate game, app_user restart identity cascade');
+    return db.raw('truncate turn, card, question, answer, game, app_user restart identity cascade');
   });
   after('destroy db connection', () => {
     return db.destroy();
   });
   afterEach('clear db data', () => {
-    return db.raw('truncate game, app_user restart identity cascade');
+    return db.raw('truncate turn, card, question, answer, game, app_user restart identity cascade');
   });
   describe('getGameByUser', () => {
-    it('returns correct game from db', async () => {
+    it('returns full and correct game object from db', async () => {
       await TestHelpers.seedFixtures(
         db,
         testUsers,
-        testGames
+        testGames,
+        testAnswers,
+        testQuestions,
+        testCards,
+        testTurns
       )
       const userId = testUsers[0].id;
       const expected = testGames.filter(game => game.id === userId)[0];
@@ -37,7 +45,7 @@ describe('Game service object', () => {
     });
   });
   describe('createNewGame', () => {
-    it('creates game in db and returns object', async () => {
+    it('creates game in db', async () => {
       await seedFixtures(db, testUsers);
       const userId = testUsers[0].id;
       const newGame = {
