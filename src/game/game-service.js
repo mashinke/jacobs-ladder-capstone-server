@@ -2,6 +2,7 @@ const createNewGame = async function (db, userId, newGame) {
   const result = await db.into('game')
     .insert({ ...newGame, id_user: userId })
     .returning('*')
+    console.log('servuce',result[0].id)
   return result[0].id;
 }
 

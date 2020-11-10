@@ -3,6 +3,7 @@ const TestHelpers = require('./test-helpers');
 const knex = require('knex');
 const { expect } = require('chai');
 const { seedFixtures } = require('./test-helpers');
+const app = require('../src/app');
 
 describe('Game service object', () => {
   let db;
@@ -27,7 +28,7 @@ describe('Game service object', () => {
   afterEach('clear db data', () => {
     return db.raw('truncate turn, card, question, answer, game, app_user restart identity cascade');
   });
-  describe.only('getGameByUser', () => {
+  describe('getGameByUser', () => {
     it('returns joined game and turn objects from db', async () => {
       await TestHelpers.seedFixtures(
         db,
