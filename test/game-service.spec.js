@@ -2,6 +2,7 @@ const GameService = require('../src/game/game-service');
 const TestHelpers = require('./test-helpers');
 const knex = require('knex');
 const { expect } = require('chai');
+const { seedFixtures } = require('./test-helpers');
 
 describe('Game service object', () => {
   let db;
@@ -24,8 +25,11 @@ describe('Game service object', () => {
   });
   describe('getGameByUser', () => {
     it('returns correct game from db', async () => {
-      await db.into('app_user').insert(testUsers);
-      await db.into('game').insert(testGames);
+      await TestHelpers.seedFixtures(
+        db,
+        testUsers,
+        testGames
+      )
       const userId = testUsers[0].id;
       const expected = testGames.filter(game => game.id === userId)[0];
       const actual = await GameService.getGameByUser(db, userId);
@@ -34,7 +38,7 @@ describe('Game service object', () => {
   });
   describe('createNewGame', () => {
     it('creates game in db and returns object', async () => {
-      await db.into('app_user').insert(testUsers);
+      await seedFixtures(db, testUsers);
       const userId = testUsers[0].id;
       const newGame = {
         total_stages: 6,

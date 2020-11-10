@@ -32,14 +32,14 @@ module.exports = {
         skip: false,
         use_hint: false,
         id_game: 1,
-        id_question: 1
+        id_card: 1
       },
       {
         id: 2,
         skip: true,
         use_hint: false,
         id_game: 1,
-        id_question: 5
+        id_card: 5
       },
       {
         id: 3,
@@ -47,13 +47,13 @@ module.exports = {
         skip: false,
         use_hint: true,
         id_game: 1,
-        id_question: 3
+        id_card: 3
       },
       {
         id: 4,
         skip: false,
         id_game: 1,
-        id_question: 4
+        id_card: 4
       },
     ];
   },
@@ -166,6 +166,22 @@ module.exports = {
         answer_text: 'to play'
       }
     ];
-
+  },
+  seedFixtures: async function (
+    db,
+    testUsers,
+    testGames,
+    testAnswers,
+    testQuestions,
+    testCards,
+    testTurns,
+  ) {
+    await db.into('app_user').insert(testUsers);
+    await db.into('game').insert(testGames);
+    await db.into('answer').insert(testAnswers);
+    await db.into('question').insert(testQuestions);
+    await db.into('card').insert(testCards);
+    await db.into('turn').insert(testTurns);
+    return;
   }
 };
