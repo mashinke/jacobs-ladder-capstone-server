@@ -36,7 +36,8 @@ describe('Game Endpoints', function () {
     beforeEach('seed users', () =>
       TestHelpers.seedFixtures(
         db,
-        testUsers
+        testUsers,
+        testGames
       )
     );
 
@@ -76,7 +77,7 @@ describe('Game Endpoints', function () {
         .send(requestBody)
         .expect(400);
     })
-    it('with valid request, creates a game and response with 201 and responds with game location', async function () {
+    it.only('with valid request, creates a game and response with 201 and responds with game location', async function () {
       const requestBody = {
         gameLength: 6,
         hintLimited: true,
@@ -90,6 +91,7 @@ describe('Game Endpoints', function () {
 
       const expected = {
         id: gameId,
+        active: true,
         stage_size: 18,
         total_stages: 6,
         max_hints: 18,
@@ -103,11 +105,14 @@ describe('Game Endpoints', function () {
         .select('*')
         .where('id', gameId)
         .first();
+      console.log(actual)
       expect(actual).to.eql(expected);
+      const allGames = await db('game').select('*')
+      console.log(allGames)
     });
   });
-  describe.only('GET /api/game', () => {
-    it.only('responds with game state, game settings, and cards to play', async () => {
+  describe('GET /api/game', () => {
+    it('responds with game state, game settings, and cards to play', async () => {
       await TestHelpers.seedFixtures(
         db,
         testUsers,
@@ -137,42 +142,6 @@ describe('Game Endpoints', function () {
         .get('/api/game')
         .expect(200)
       console.log(response.body)
-      // client expects:
-      //
-      //   gameState: {
-      //     ended: false,
-      //     hintsUsed: 6, .
-      //     position: 23, .
-      //     turnNumber: 5,
-      //     successfulRolls: 3, .
-      //     totalRolls: 4, .
-      //     successfulSkips: 0, .
-      //     totalSkips: 1 .
-      //   },
-      //   gameSettings: {
-      //     gameId: 54,
-      //     maxHints: 18,
-      //     totalStages: 4,
-      //     stageSize: 18
-      //   },
-      //   rollCard: {
-      //     cardId: 32,
-      //     cardImage: '/cards/32.png',
-      //     questionText: 'what is this letter name?',
-      //     answers: [
-      //       'alef', 'zayin', 'mem', 'kaf'
-      //     ]
-      //   },
-      //   skipCard: {
-      //     cardId: 18,
-      //     image: '/cards/18.png',
-      //     questionText: 'what does this word mean?',
-      //     answers: [
-      //       'work', 'sleep', 'notebook', 'to play'
-      //     ]
-      //   },
-      //   timeElapsed: 832
-      // }
     })
   })
 });

@@ -2,7 +2,16 @@ module.exports = {
   createTestGames() {
     return [
       {
-        id: 1,
+        id: 8,
+        stage_size: 18,
+        total_stages: 6,
+        hint_limit: true,
+        max_hints: 18,
+        ended: false,
+        id_user: 1
+      },
+      {
+        id: 9,
         stage_size: 18,
         total_stages: 6,
         hint_limit: true,

@@ -1,4 +1,9 @@
 const createNewGame = async function (db, userId, newGame) {
+  // deactivate last game
+  await db('game')
+    .where('id_user', userId)
+    .update({active: false})
+
   const result = await db.into('game')
     .insert({ ...newGame, id_user: userId })
     .returning('*')
