@@ -28,6 +28,7 @@ insert into answer ( answer_text )
   values
     ('alef'),
     ('bes'),
+    ('ves'),
     ('gimel'),
     ('dales'),
     ('hey'),
