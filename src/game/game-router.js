@@ -56,9 +56,24 @@ gameRouter
     };
 
     response.gameState = {};
-    response.rollCard = await cardService.getRandomCard(db, 1);
-    response.skipCard = await cardService.getRandomCard(db, 2);
+    const rC = await cardService.getRandomCard(db, 1);
+    const sC = await cardService.getRandomCard(db, 2);
+    
+    // different naming schemes...
+    response.rollCard = {
+      id: rC.id,
+      altText: rC.alt_text,
+      questionText: rC.question_text,
+      answers: rC.answers
+    };
+    response.skipCard = {
+      id: sC.id,
+      altText: sC.alt_text,
+      questionText: sC.question_text,
+      answers: sC.answers
+    };
     response.gameState.turnNumber = gameTurns.length + 1;
+
     // that's it for a new game. 
 
     // Now if there have been turns already, put in the rest of the info
