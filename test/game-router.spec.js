@@ -118,21 +118,36 @@ describe('Game Endpoints', function () {
         testTurns
       );
 
+
+      const userId = 1 // temporary default
+      const game = testGames.filter(game => game.id_user === userId)[0]
+      const gameId = game.id;
+      const maxHints = game.max_hints;
+      const totalStages = game.total_stages;
+      const stageSize = 18 // temporary default
+
+      const gameSettings = {
+        gameId,
+        maxHints,
+        totalStages,
+        stageSize
+      }
+
       const response = await supertest(app)
         .get('/api/game')
         .expect(200)
+      console.log(response.body)
       // client expects:
       //
       //   gameState: {
       //     ended: false,
-      //     roll: 8,
-      //     hintsUsed: 6,
-      //     position: 23,
+      //     hintsUsed: 6, .
+      //     position: 23, .
       //     turnNumber: 5,
-      //     successfulRolls: 3,
-      //     totalRolls: 4,
-      //     successfulSkips: 0,
-      //     totalSkips: 1
+      //     successfulRolls: 3, .
+      //     totalRolls: 4, .
+      //     successfulSkips: 0, .
+      //     totalSkips: 1 .
       //   },
       //   gameSettings: {
       //     gameId: 54,

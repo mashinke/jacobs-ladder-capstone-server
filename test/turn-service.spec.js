@@ -41,7 +41,7 @@ describe('Game service object', () => {
       const gameId = testGames[0].id;
       const newTurn = {
         roll: 8,
-        skip: false,
+        skip_attempt: false,
         use_hint: false,
         id_card: 3
       };

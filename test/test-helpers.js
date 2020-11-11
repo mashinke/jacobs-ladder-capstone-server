@@ -29,7 +29,7 @@ module.exports = {
       {
         id: 1,
         roll: 8,
-        skip: false,
+        skip_attempt: false,
         use_hint: false,
         id_game: 1,
         id_card: 1
@@ -37,15 +37,16 @@ module.exports = {
       {
         id: 2,
         roll: null,
-        skip: true,
+        skip_attempt: true,
+        skip_success: false,
         use_hint: false,
         id_game: 1,
         id_card: 5
       },
       {
         id: 3,
-        roll: 10,
-        skip: false,
+        roll: null,
+        skip_attempt: true,
         use_hint: true,
         id_game: 1,
         id_card: 3
@@ -53,7 +54,7 @@ module.exports = {
       {
         id: 4,
         roll: null,
-        skip: false,
+        skip_attempt: false,
         use_hint: false,
         id_game: 1,
         id_card: 4
