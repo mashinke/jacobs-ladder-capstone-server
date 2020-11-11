@@ -11,18 +11,24 @@ gameRouter
     const db = req.app.get('db');
     try {
       if (!req.body) return res.status(400).send();
-      const { gameLength, hintLimited, hintLimit } = req.body;
-
+      const { totalStages, hintLimit, maxHints } = req.body;
+      console.log(req.body)
       // Validation
-      if (!gameLength) return res.status(400).send();
-      if (!hintLimit && !hintLimited) return res.status(400).send();
-      if (hintLimited && hintLimit < 0) return res.status(400).send();
+      if (!totalStages) return res
+        .status(400)
+        .json({ message: 'totalStages is required' });
+      if (!maxHints && hintLimit) return res
+        .status(400)
+        .json({ message: 'maxHints required if hintLimit is true'});
+      if (hintLimit && maxHints < 0) return res
+        .status(400)
+        .json({ message: 'negative numbers not allowed for maxHints'});
 
       const userId = 1; // for now, default value
       const newGameId = await GameService.createNewGame(db, userId, {
-        total_stages: gameLength,
-        hint_limit: hintLimited ? true : false,
-        max_hints: hintLimit
+        total_stages: totalStages,
+        hint_limit: hintLimit ? true : false,
+        max_hints: maxHints
       })
       return res
         .status(201)
@@ -42,6 +48,7 @@ gameRouter
     const {
       id_game,
       max_hints,
+      hint_limit,
       total_stages,
       stage_size,
       ended
@@ -50,6 +57,7 @@ gameRouter
     response.gameSettings = {
       gameId: id_game,
       maxHints: max_hints,
+      hintLimit: hint_limit,
       totalStages: total_stages,
       stageSize: stage_size,
       ended
@@ -58,7 +66,7 @@ gameRouter
     response.gameState = {};
     const rC = await cardService.getRandomCard(db, 1);
     const sC = await cardService.getRandomCard(db, 2);
-    
+
     // different naming schemes...
     response.rollCard = {
       id: rC.id,
