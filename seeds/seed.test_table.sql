@@ -133,6 +133,12 @@ insert into card
     ( 'כְּבוד', 2, 45, 2 ),
     ( 'מַלְכוּת', 2, 46, 2 ),
     ( 'מֶלֶךְ', 2, 47, 2 );
-
+insert into turn 
+  ( roll, skip_attempt, skip_success, use_hint, id_game, id_card )
+  values
+    ( 8, false, null, false, 1, 1 ),
+    ( null, true, false, false, 1, 5 ),
+    ( 3, null, true, true, 1, 3 ),
+    ( null, false, null, false, 1, 5 );
 
 commit;
