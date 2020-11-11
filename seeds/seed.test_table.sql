@@ -137,8 +137,9 @@ insert into turn
   ( roll, skip_attempt, skip_success, use_hint, id_game, id_card )
   values
     ( 8, false, null, false, 1, 1 ),
-    ( null, true, false, false, 1, 5 ),
-    ( 3, null, true, true, 1, 3 ),
-    ( null, false, null, false, 1, 5 );
+    ( null, true, false, null, 1, 35 ),
+    ( 3, false, null, true, 1, 3 ),
+    ( null, false, null, false, 1, 5 ),
+    ( null, true, true, null, 1, 47 );
 
 commit;

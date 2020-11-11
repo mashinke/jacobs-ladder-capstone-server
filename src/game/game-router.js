@@ -93,10 +93,10 @@ gameRouter
         gameTurns.reduce((total, currentTurn) => {
           if (currentTurn.use_hint) total.hintsUsed++;
           if (currentTurn.skip_attempt) {
+            total.totalSkips++;
             if (currentTurn.skip_success) {
               total.position = total.position + stage_size;
               total.successfulSkips++;
-              total.totalSkips++;
             }
           } else {
             total.totalRolls++;
