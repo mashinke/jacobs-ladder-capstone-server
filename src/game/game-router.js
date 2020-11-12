@@ -73,7 +73,7 @@ gameRouter
     const sC = await cardService.getRandomCard(db, 2);
 
     // different naming schemes...
-    if (rC) {
+    if (!last_turn) {
       response.rollCard = {
         id: rC.id,
         altText: rC.alt_text,

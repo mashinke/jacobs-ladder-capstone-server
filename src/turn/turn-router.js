@@ -19,7 +19,7 @@ turnRouter
 
       const { cardId, answer, skipCard, useHint } = req.body;
 
-      const lastTurn = await GameService.checkGameLastTurnByUser(db, req.userId)
+      let lastTurn = await GameService.checkGameLastTurnByUser(db, req.userId)
 
       if (!lastTurn) {
         // validate
@@ -44,20 +44,30 @@ turnRouter
       const skip_attempt = skipCard;
       const correctAnswer = await cardService.getAnswer(db, id_card);
       let last_turn = lastTurn;
+      let gameWon;
       let roll;
       let skip_success;
 
-      if (!use_hint || last_turn) {
-        if (correctAnswer === answer) {
-          if (skip_attempt) {
-            skip_success = true;
-          } else {
-            roll = rollDie();
+      if (!lastTurn) {
+        if (!use_hint) {
+          if (correctAnswer === answer) {
+            if (skip_attempt) {
+              skip_success = true;
+            } else {
+              roll = rollDie();
+            }
           }
+        } else {
+          roll = rollDie();
         }
       } else {
-        roll = rollDie();
+        if (correctAnswer === answer) {
+          GameService.winActiveGameByUser(db, req.userId);
+          gameWon = true;
+        }
       }
+
+
 
       if (!lastTurn) {
         // check final position
@@ -73,9 +83,12 @@ turnRouter
           return total;
         }, 0);
 
-        position += roll;
+        if (roll) position += roll;
+        if (skip_success) position += gameSettings.stage_size;
 
         const finalPosition = gameSettings.total_stages * gameSettings.stage_size;
+
+        console.log(position, finalPosition)
 
         if (position >= finalPosition) {
           await GameService.flagGameLastTurnByUser(db, req.userId)
@@ -98,7 +111,8 @@ turnRouter
         correctAnswer,
         useHint,
         lastTurn,
-        skipSuccess: skip_success
+        skipSuccess: skip_success,
+        gameWon
       });
     }
     catch (err) { next(err) }
