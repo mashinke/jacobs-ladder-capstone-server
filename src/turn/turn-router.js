@@ -66,7 +66,7 @@ turnRouter
         roll,
         correctAnswer, 
         useHint, 
-        skipAttempt: skipCard
+        skipSuccess: skip_success
       });
     }
     catch (err) { next(err) }

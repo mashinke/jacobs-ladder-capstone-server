@@ -1,5 +1,6 @@
 const express = require('express');
 const cardService = require('../card/card-service');
+const { winActiveGameByUser } = require('./game-service');
 const GameService = require('./game-service');
 const jsonBodyParser = express.json();
 const gameRouter = express.Router();
@@ -19,10 +20,10 @@ gameRouter
         .json({ message: 'totalStages is required' });
       if (!maxHints && hintLimit) return res
         .status(400)
-        .json({ message: 'maxHints required if hintLimit is true'});
+        .json({ message: 'maxHints required if hintLimit is true' });
       if (hintLimit && maxHints < 0) return res
         .status(400)
-        .json({ message: 'negative numbers not allowed for maxHints'});
+        .json({ message: 'negative numbers not allowed for maxHints' });
 
       const newGameId = await GameService.createNewGame(db, req.userId, {
         total_stages: totalStages,
@@ -85,15 +86,6 @@ gameRouter
     // Now if there have been turns already, put in the rest of the info
     if (gameTurns.length !== 0) {
       const roll = Math.floor(Math.random() * 10);
-      const hintsUsed = gameTurns.reduce((total, currentTurn) => {
-        if (currentTurn.use_hint) total++;
-        return total;
-      }, 0)
-      const position = gameTurns.reduce((total, currentTurn) => {
-        const increment = currentTurn.skip ? stage_size : currentTurn.roll;
-        total = increment ? total + increment : total;
-        return total;
-      }, 0)
 
       Object.assign(response.gameState,
         gameTurns.reduce((total, currentTurn) => {
@@ -122,6 +114,14 @@ gameRouter
         })
       );
     }
+
+    // check for victory conditions
+    const finalPosition = total_stages * stage_size;
+    if (
+      response.gameState.position >= finalPosition
+      && !gameSettings.ended
+    )
+      winActiveGameByUser(db, req.userId);
 
     return res
       .status(200)

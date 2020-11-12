@@ -51,10 +51,19 @@ const getActiveGameIdByUser = async function (db, userId) {
   return game.id;
 }
 
+const winActiveGameByUser = async function (db, userId) {
+  console.log('win game', userId)
+  await db('game')
+    .where('id_user', userId)
+    .where('active', true)
+    .update({ended: true})
+}
+
 module.exports = {
   getActiveGameTurnsByUser,
   getActiveGameSettingsByUser,
   createNewGame,
   checkGameIsActive,
-  getActiveGameIdByUser
+  getActiveGameIdByUser,
+  winActiveGameByUser
 }
