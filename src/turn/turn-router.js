@@ -1,5 +1,6 @@
 const express = require('express');
 const cardService = require('../card/card-service');
+const gameService = require('../game/game-service');
 const GameService = require('../game/game-service');
 const TurnService = require('./turn-service');
 const jsonBodyParser = express.json();
@@ -15,20 +16,9 @@ turnRouter
     const db = req.app.get('db');
     try {
       if (!req.body) return res.status(400).send();
-      const { gameId, cardId, answer, skipCard, useHint } = req.body;
+      const { cardId, answer, skipCard, useHint } = req.body;
+      
       // validate
-      if (!gameId) return res.status(400).json({ message: 'gameId required' });
-
-      const gameStatus = await GameService.checkGameIsActive(db, gameId);
-      if (gameStatus === undefined)
-        return res
-          .status(404)
-          .json({ message: `can't find game with id ${gameId}` })
-      if (!gameStatus.active)
-        return res
-          .status(400)
-          .json({ message: `game with id ${gameId} is not active` })
-
       if (!cardId) return res.status(400).json({ message: 'cardId required' });
       if (skipCard && !answer) {
         return
@@ -36,9 +26,13 @@ turnRouter
       }
       if (!useHint && !answer)
         res.status(400).json({ message: 'either hint or answer required' });
+
+      // get the active game
+      const id_game = await gameService.getActiveGameIdByUser(db, req.userId)
+      console.log(id_game)
+
       // build turn object
       const id_card = cardId;
-      const id_game = gameId;
       const use_hint = useHint;
       const skip_attempt = skipCard;
 

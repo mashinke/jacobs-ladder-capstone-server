@@ -24,8 +24,7 @@ gameRouter
         .status(400)
         .json({ message: 'negative numbers not allowed for maxHints'});
 
-      const userId = 1; // for now, default value
-      const newGameId = await GameService.createNewGame(db, userId, {
+      const newGameId = await GameService.createNewGame(db, req.userId, {
         total_stages: totalStages,
         hint_limit: hintLimit ? true : false,
         max_hints: maxHints
@@ -38,11 +37,10 @@ gameRouter
   })
   .get(async (req, res, next) => {
     const db = req.app.get('db')
-    const userId = 1 // for now, default value
 
     const response = {};
-    const gameSettings = await GameService.getGameSettingsByUser(db, userId);
-    const gameTurns = await GameService.getGameTurnsByUser(db, userId);
+    const gameSettings = await GameService.getActiveGameSettingsByUser(db, req.userId);
+    const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
 
     // different naming schemes for db and API...
     const {

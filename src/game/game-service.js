@@ -10,7 +10,7 @@ const createNewGame = async function (db, userId, newGame) {
   return result[0].id;
 }
 
-const getGameSettingsByUser = async function (db, userId) {
+const getActiveGameSettingsByUser = async function (db, userId) {
   const game = await db
     .select('*')
     .from('game')
@@ -20,7 +20,7 @@ const getGameSettingsByUser = async function (db, userId) {
   return game;
 }
 
-const getGameTurnsByUser = async function (db, userId) {
+const getActiveGameTurnsByUser = async function (db, userId) {
   const turns = await db
     .select('turn.*')
     .from('game')
@@ -41,9 +41,19 @@ const checkGameIsActive = async function (db, gameId) {
   console.log(gameStatus)
   return gameStatus;
 }
+
+const getActiveGameIdByUser = async function (db, userId) {
+  const game = await db('game')
+    .select('id')
+    .where('id_user', userId)
+    .first()
+  return game.id;
+}
+
 module.exports = {
-  getGameTurnsByUser,
-  getGameSettingsByUser,
+  getActiveGameTurnsByUser,
+  getActiveGameSettingsByUser,
   createNewGame,
-  checkGameIsActive
+  checkGameIsActive,
+  getActiveGameIdByUser
 }

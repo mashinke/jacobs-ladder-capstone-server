@@ -17,6 +17,11 @@ app.use(cors());
 app.use(morgan(morganOption));
 app.use(helmet());
 
+app.use('/api', (req, res, next) => {
+  req.userId = 1; // temporary default setting
+  next();
+});
+
 app.use('/api/game', gameRouter );
 app.use('/api/turn', turnRouter );
 
