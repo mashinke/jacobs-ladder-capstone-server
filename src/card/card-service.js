@@ -30,19 +30,18 @@ const getRandomCard = async function (db, difficulty) {
   return card;
 }
 
-const checkAnswer = async function (db, cardId, answer) {
+const getAnswer = async function (db, cardId) {
   const result = await db('card')
-    .count()
+    .select('answer.answer_text')
     .where('card.id', cardId)
-    .where('answer.answer_text', answer)
     .join('answer', function () {
       this.on('card.id_answer', '=', 'answer.id')
     }).first();
-    console.log(result.count)
-    return result.count;
+    console.log(result)
+    return result.answer_text;
 }
 
 module.exports = {
   getRandomCard,
-  checkAnswer
+  getAnswer
 }

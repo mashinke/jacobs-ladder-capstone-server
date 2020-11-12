@@ -35,6 +35,7 @@ turnRouter
       const id_card = cardId;
       const use_hint = useHint;
       const skip_attempt = skipCard;
+      const correctAnswer = await cardService.getAnswer(db, id_card);
 
       let roll;
       let skip_success;
@@ -44,8 +45,8 @@ turnRouter
       }
 
       else {
-        const correct = await cardService.checkAnswer(db, id_card, answer) > 0;
-        if (correct) {
+        if (correctAnswer === answer) {
+          console.log('correct answer', correctAnswer)
           if (skip_attempt) {
             skip_success = true;
           } else {
@@ -62,9 +63,14 @@ turnRouter
         id_card,
         id_game
       }
-      const payload = roll || skip_success;
       await TurnService.createTurn(db, turn);
-      return res.status(200).json({ payload });
+      console.log('about to sent', correctAnswer)
+      return res.status(200).json({ 
+        roll,
+        correctAnswer, 
+        useHint, 
+        skipAttempt: skipCard
+      });
     }
     catch (err) { next(err) }
   })
