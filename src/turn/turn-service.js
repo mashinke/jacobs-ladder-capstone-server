@@ -1,8 +1,8 @@
-const createTurn = async function (db, newTurn, gameId) {
+const createTurn = async function (db, newTurn) {
+  console.log(newTurn)
   const result = await db.into('turn')
-    .insert({...newTurn, id_game: gameId})
-    .returning('id')
-  return result[0];
+    .insert({ ...newTurn })
+  return;
 }
 
 module.exports = {createTurn}

@@ -31,7 +31,15 @@ const getRandomCard = async function (db, difficulty) {
 }
 
 const checkAnswer = async function (db, cardId, answer) {
-
+  const result = await db('card')
+    .count()
+    .where('card.id', cardId)
+    .where('answer.answer_text', answer)
+    .join('answer', function () {
+      this.on('card.id_answer', '=', 'answer.id')
+    }).first();
+    console.log(result.count)
+    return result.count;
 }
 
 module.exports = {

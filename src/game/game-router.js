@@ -46,7 +46,7 @@ gameRouter
 
     // different naming schemes for db and API...
     const {
-      id_game,
+      id,
       max_hints,
       hint_limit,
       total_stages,
@@ -55,7 +55,7 @@ gameRouter
     } = gameSettings;
 
     response.gameSettings = {
-      gameId: id_game,
+      gameId: id,
       maxHints: max_hints,
       hintLimit: hint_limit,
       totalStages: total_stages,

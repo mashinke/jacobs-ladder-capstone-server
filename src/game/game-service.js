@@ -32,8 +32,18 @@ const getGameTurnsByUser = async function (db, userId) {
 
   return turns;
 }
+
+const checkGameIsActive = async function (db, gameId) {
+  const gameStatus = await db('game')
+    .select('active')
+    .where('id', gameId)
+    .first();
+  console.log(gameStatus)
+  return gameStatus;
+}
 module.exports = {
   getGameTurnsByUser,
   getGameSettingsByUser,
-  createNewGame
+  createNewGame,
+  checkGameIsActive
 }
