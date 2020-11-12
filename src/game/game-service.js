@@ -46,6 +46,7 @@ const getActiveGameIdByUser = async function (db, userId) {
   const game = await db('game')
     .select('id')
     .where('id_user', userId)
+    .where('active', true)
     .first()
   return game.id;
 }

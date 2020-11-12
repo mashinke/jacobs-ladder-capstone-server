@@ -29,7 +29,6 @@ turnRouter
 
       // get the active game
       const id_game = await gameService.getActiveGameIdByUser(db, req.userId)
-      console.log(id_game)
 
       // build turn object
       const id_card = cardId;
@@ -46,7 +45,6 @@ turnRouter
 
       else {
         if (correctAnswer === answer) {
-          console.log('correct answer', correctAnswer)
           if (skip_attempt) {
             skip_success = true;
           } else {
@@ -64,7 +62,6 @@ turnRouter
         id_game
       }
       await TurnService.createTurn(db, turn);
-      console.log('about to sent', correctAnswer)
       return res.status(200).json({ 
         roll,
         correctAnswer, 

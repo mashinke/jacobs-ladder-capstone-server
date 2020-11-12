@@ -37,7 +37,6 @@ const getAnswer = async function (db, cardId) {
     .join('answer', function () {
       this.on('card.id_answer', '=', 'answer.id')
     }).first();
-    console.log(result)
     return result.answer_text;
 }
 
