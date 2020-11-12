@@ -42,6 +42,16 @@ const checkGameIsActive = async function (db, gameId) {
   return gameStatus;
 }
 
+const checkGameLastTurnByUser = async function (db, userId) {
+  const lastTurn = await db('game')
+    .select('last_turn')
+    .where('id_user', userId)
+    .where('active', true)
+    .where('ended', false)
+    .first();
+  return lastTurn.last_turn;
+}
+
 const getActiveGameIdByUser = async function (db, userId) {
   const game = await db('game')
     .select('id')
@@ -51,12 +61,19 @@ const getActiveGameIdByUser = async function (db, userId) {
   return game.id;
 }
 
+const flagGameLastTurnByUser = async function (db, userId) {
+  await db('game')
+    .where('id_user', userId)
+    .where('active', true)
+    .update({ last_turn: true })
+}
+
 const winActiveGameByUser = async function (db, userId) {
   console.log('win game', userId)
   await db('game')
     .where('id_user', userId)
     .where('active', true)
-    .update({ended: true})
+    .update({ ended: true })
 }
 
 module.exports = {
@@ -64,6 +81,8 @@ module.exports = {
   getActiveGameSettingsByUser,
   createNewGame,
   checkGameIsActive,
+  checkGameLastTurnByUser,
   getActiveGameIdByUser,
+  flagGameLastTurnByUser,
   winActiveGameByUser
 }

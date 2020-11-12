@@ -1,6 +1,5 @@
 const express = require('express');
 const cardService = require('../card/card-service');
-const { winActiveGameByUser } = require('./game-service');
 const GameService = require('./game-service');
 const jsonBodyParser = express.json();
 const gameRouter = express.Router();
@@ -50,6 +49,7 @@ gameRouter
       hint_limit,
       total_stages,
       stage_size,
+      last_turn,
       ended
     } = gameSettings;
 
@@ -59,31 +59,40 @@ gameRouter
       hintLimit: hint_limit,
       totalStages: total_stages,
       stageSize: stage_size,
+      lastTurn: last_turn,
       ended
     };
 
     response.gameState = {};
-    const rC = await cardService.getRandomCard(db, 1);
+    let rC = null;
+    // only do this on a regular turn
+    if (!response.gameState.lastTurn) {
+      rC = await cardService.getRandomCard(db, 1);
+    }
+    // we get a skip card anyway
     const sC = await cardService.getRandomCard(db, 2);
 
     // different naming schemes...
-    response.rollCard = {
-      id: rC.id,
-      altText: rC.alt_text,
-      questionText: rC.question_text,
-      answers: rC.answers
+    if (rC) {
+      response.rollCard = {
+        id: rC.id,
+        altText: rC.alt_text,
+        questionText: rC.question_text,
+        answers: rC.answers
+      };
     };
+
     response.skipCard = {
       id: sC.id,
       altText: sC.alt_text,
       questionText: sC.question_text,
       answers: sC.answers
     };
+
     response.gameState.turnNumber = gameTurns.length + 1;
 
-    // that's it for a new game. 
-
     // Now if there have been turns already, put in the rest of the info
+
     if (gameTurns.length !== 0) {
       const roll = Math.floor(Math.random() * 10);
 
@@ -103,6 +112,7 @@ gameRouter
               total.successfulRolls++;
             }
           }
+          
           return total;
         }, {
           hintsUsed: 0,
@@ -114,14 +124,6 @@ gameRouter
         })
       );
     }
-
-    // check for victory conditions
-    const finalPosition = total_stages * stage_size;
-    if (
-      response.gameState.position >= finalPosition
-      && !gameSettings.ended
-    )
-      winActiveGameByUser(db, req.userId);
 
     return res
       .status(200)
