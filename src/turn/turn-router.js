@@ -44,10 +44,13 @@ turnRouter
 
       let roll;
       let skip_success;
-      const correct = await cardService.checkAnswer(db, id_card, answer) > 0;
 
-      if (use_hint) roll = rollDie()
+      if (use_hint) {
+        roll = rollDie();
+      }
+
       else {
+        const correct = await cardService.checkAnswer(db, id_card, answer) > 0;
         if (correct) {
           if (skip_attempt) {
             skip_success = true;
