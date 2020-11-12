@@ -62,9 +62,9 @@ turnRouter
         id_card,
         id_game
       }
-      console.log(turn)
+      const payload = roll || skip_success;
       await TurnService.createTurn(db, turn);
-      return res.status(204).send();
+      return res.status(200).json({ payload });
     }
     catch (err) { next(err) }
   })
