@@ -9,9 +9,10 @@ truncate
   app_user
   restart identity cascade;
 
-insert into app_user (email)
+insert into app_user (email, password)
   values (
-    'test@example.net'
+    'test@example.net',
+    '$2b$10$kxCpib6Qm2AOws4yfCnrf.HOeXWpUDOXwxuElpK0ggzGdZpFYgRsS'
   );
 
 insert into game (

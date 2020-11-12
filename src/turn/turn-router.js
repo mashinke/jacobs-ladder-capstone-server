@@ -85,7 +85,7 @@ turnRouter
 
         if (roll) position += roll;
         if (skip_success) position += gameSettings.stage_size;
-
+        
         const finalPosition = gameSettings.total_stages * gameSettings.stage_size;
 
         console.log(position, finalPosition)
