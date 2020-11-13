@@ -9,6 +9,7 @@ const turnRouter = require('./turn/turn-router');
 const authRouter = require('./auth/auth-router');
 const validateJWT = require('./middleware/validate-jwt');
 const userRouter = require('./user/user-router');
+const scoreRouter = require('./score/score-router');
 
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
@@ -29,6 +30,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/game', validateJWT, gameRouter);
 app.use('/api/turn', validateJWT, turnRouter);
 app.use('/api/user', userRouter);
+app.use('/api/score', validateJWT, scoreRouter);
 
 app.use(errorHandler);
 

@@ -97,31 +97,7 @@ gameRouter
       const roll = Math.floor(Math.random() * 10);
 
       Object.assign(response.gameState,
-        gameTurns.reduce((total, currentTurn) => {
-          if (currentTurn.use_hint) total.hintsUsed++;
-          if (currentTurn.skip_attempt) {
-            total.totalSkips++;
-            if (currentTurn.skip_success) {
-              total.position = total.position + stage_size;
-              total.successfulSkips++;
-            }
-          } else {
-            total.totalRolls++;
-            if (currentTurn.roll) {
-              total.position = total.position + currentTurn.roll;
-              total.successfulRolls++;
-            }
-          }
-          
-          return total;
-        }, {
-          hintsUsed: 0,
-          position: 0,
-          successfulRolls: 0,
-          totalRolls: 0,
-          successfulSkips: 0,
-          totalSkips: 0
-        })
+        GameService.reduceGameState(gameTurns, stage_size)
       );
     }
 

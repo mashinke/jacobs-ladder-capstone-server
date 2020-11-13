@@ -76,6 +76,53 @@ const winActiveGameByUser = async function (db, userId) {
     .update({ ended: true })
 }
 
+const getAllGameTurnsByUser = async (db, userId) => {
+  response = await db('game')
+    .select('*')
+    .where('id_user', userId)
+    .join('turn', function () {
+      this.on('turn.id_game', '=', 'game.id')
+    });
+  console.log(response.length)
+
+  const games = response.reduce((acc, currentTurn) => {
+    const gameId = currentTurn.id_game;
+    if(!acc[gameId]) acc[gameId] = [currentTurn];
+    else acc[gameId].push(currentTurn);
+    return acc;
+  }, {})
+  
+  return games;
+}
+
+const reduceGameState = (turns, stage_size) => {
+  return turns.reduce((total, currentTurn) => {
+    if (currentTurn.use_hint) total.hintsUsed++;
+    if (currentTurn.skip_attempt) {
+      total.totalSkips++;
+      if (currentTurn.skip_success) {
+        total.position = total.position + stage_size;
+        total.successfulSkips++;
+      }
+    } else {
+      total.totalRolls++;
+      if (currentTurn.roll) {
+        total.position = total.position + currentTurn.roll;
+        total.successfulRolls++;
+      }
+    }
+
+    return total;
+  }, {
+    hintsUsed: 0,
+    position: 0,
+    successfulRolls: 0,
+    totalRolls: 0,
+    successfulSkips: 0,
+    totalSkips: 0
+  })
+}
+
 module.exports = {
   getActiveGameTurnsByUser,
   getActiveGameSettingsByUser,
@@ -84,5 +131,7 @@ module.exports = {
   checkGameLastTurnByUser,
   getActiveGameIdByUser,
   flagGameLastTurnByUser,
-  winActiveGameByUser
+  winActiveGameByUser,
+  reduceGameState,
+  getAllGameTurnsByUser
 }
