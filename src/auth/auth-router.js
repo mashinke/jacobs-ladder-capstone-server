@@ -14,7 +14,7 @@ authRouter
       if (!(field in req.body)) {
         return res
           .status(400)
-          .json({ error: `${field} required` });
+          .json({ message: `${field} required` });
       }
     }
     const db = req.app.get('db');
@@ -27,7 +27,7 @@ authRouter
       }
       return res
         .status(401)
-        .json({ error: 'invalid credentials' })
+        .json({ message: 'invalid credentials' })
     } catch (error) {
       next(error)
     }
