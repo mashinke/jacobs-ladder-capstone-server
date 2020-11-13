@@ -19,17 +19,19 @@ scoreRouter
           successfulSkips, 
           totalSkips 
         } = GameService.reduceGameState(currentGameTurns, stage_size)
+        const position = currentGameTurns.length;
         return {
           ended,
           stageSize: stage_size,
           totalStages: total_stages,
           hintsUsed,
-          maxHints: hint_limit && max_hints,
+          maxHints: hint_limit ? max_hints : undefined,
           hintLimit: hint_limit,
           successfulRolls,
           totalRolls,
           successfulSkips,
-          totalSkips
+          totalSkips,
+          position
         }
       })
 
