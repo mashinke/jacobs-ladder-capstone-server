@@ -40,6 +40,11 @@ gameRouter
 
     const response = {};
     const gameSettings = await GameService.getActiveGameSettingsByUser(db, req.userId);
+    if(!gameSettings) {
+      return res
+        .status(200)
+        .json({});
+    }
     const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
 
     // different naming schemes for db and API...
