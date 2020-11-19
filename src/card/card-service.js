@@ -6,8 +6,8 @@ function shuffle(s) {
     s[i] = temp;
   }
 }
-const getRandomCard = async function (db, difficulty) {
-  let stack = await db('card')
+const getRandomCard = async function (db, difficulty, used = []) {
+  let allCards = await db('card')
     .select(
       'card.id', 
       'card.alt_text', 
@@ -22,6 +22,14 @@ const getRandomCard = async function (db, difficulty) {
     .join('answer', function () {
       this.on('card.id_answer', '=', 'answer.id')
     })
+  
+  let stack;
+  
+  if(allCards.length !== used.length) {
+    stack = allCards.filter(card => !used.includes(card.id))
+  } else {
+    stack = allCards;
+  }
 
   shuffle(stack);
   const { answer_text:_, ...card } = stack[0];

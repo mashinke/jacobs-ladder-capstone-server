@@ -4,6 +4,15 @@ const GameService = require('./game-service');
 const jsonBodyParser = express.json();
 const gameRouter = express.Router();
 
+function shuffle(s) {
+  for (let i = s.length - 1; i > 0; i--) {
+    r = Math.floor(Math.random() * i);
+    temp = s[r];
+    s[r] = s[i];
+    s[i] = temp;
+  }
+}
+
 gameRouter
   .route('/')
   .post(jsonBodyParser, async (req, res, next) => {
@@ -68,14 +77,24 @@ gameRouter
       ended
     };
 
+    const makeUsedPile = (skipCard = false) => gameTurns.reduce((total, currTurn) => {
+      if(!currTurn.skip_attempt === skipCard) return total;
+      if(total.find(card => card === currTurn.id_card)){
+        return [currTurn.id_card]
+      }
+      return [...total, currTurn.id_card]
+    },[])
+    const usedRollCards = makeUsedPile(false)
+    const usedSkipCards = makeUsedPile(true)      
+
     response.gameState = {};
     let rC = null;
     // only do this on a regular turn
     if (!response.gameState.lastTurn) {
-      rC = await cardService.getRandomCard(db, 1);
+      rC = await cardService.getRandomCard(db, 1, usedRollCards);
     }
     // we get a skip card anyway
-    const sC = await cardService.getRandomCard(db, 2);
+    const sC = await cardService.getRandomCard(db, 2, usedSkipCards);
 
     // different naming schemes...
     if (!last_turn) {
