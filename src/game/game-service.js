@@ -1,13 +1,23 @@
+const { response } = require("express");
+
 const createNewGame = async function (db, userId, newGame) {
   // deactivate last game
   await db('game')
     .where('id_user', userId)
-    .update({ active: false })
-
+    .update({ active: false });
   const result = await db.into('game')
     .insert({ ...newGame, id_user: userId })
-    .returning('*')
+    .returning('*');
   return result[0].id;
+}
+
+const getGameSettingsByGame = async function (db, gameId) {
+  const game = await db
+    .select()
+    .from('game')
+    .where('id', gameId)
+    .first();
+  return game;
 }
 
 const getActiveGameSettingsByUser = async function (db, userId) {
@@ -31,15 +41,6 @@ const getActiveGameTurnsByUser = async function (db, userId) {
     })
 
   return turns;
-}
-
-const checkGameIsActive = async function (db, gameId) {
-  const gameStatus = await db('game')
-    .select('active')
-    .where('id', gameId)
-    .first();
-  console.log(gameStatus)
-  return gameStatus;
 }
 
 const checkGameLastTurnByUser = async function (db, userId) {
@@ -69,7 +70,6 @@ const flagGameLastTurnByUser = async function (db, userId) {
 }
 
 const winActiveGameByUser = async function (db, userId) {
-  console.log('win game', userId)
   await db('game')
     .where('id_user', userId)
     .where('active', true)
@@ -77,26 +77,42 @@ const winActiveGameByUser = async function (db, userId) {
 }
 
 const getAllGameTurnsByUser = async (db, userId) => {
-  response = await db('game')
+  const response = await db('game')
     .select('*')
     .where('id_user', userId)
     .join('turn', function () {
       this.on('turn.id_game', '=', 'game.id')
     });
-  console.log(response.length)
 
   const games = response.reduce((acc, currentTurn) => {
     const gameId = currentTurn.id_game;
-    if(!acc[gameId]) acc[gameId] = [currentTurn];
+    if (!acc[gameId]) acc[gameId] = [currentTurn];
     else acc[gameId].push(currentTurn);
     return acc;
   }, {})
-  
+
   return games;
 }
 
-const reduceGameState = (turns, stage_size) => {
+const getAllGameIdsByUser = async (db, userId) => {
+  const response = await db('game')
+    .select('id')
+    .where('id_user', userId)
+
+  return response.map(game => game.id)
+}
+
+const reduceGameStateByGame = async (db, gameId) => {
+  const gameSettings = await db('game')
+    .select()
+    .where('id', gameId)
+    .first();
+  const { stage_size } = gameSettings;
+  const turns = await db('turn')
+    .select()
+    .where('id_game', gameId);
   return turns.reduce((total, currentTurn) => {
+    total.turnNumber++
     if (currentTurn.use_hint) total.hintsUsed++;
     if (currentTurn.skip_attempt) {
       total.totalSkips++;
@@ -114,6 +130,7 @@ const reduceGameState = (turns, stage_size) => {
 
     return total;
   }, {
+    turnNumber: 0,
     hintsUsed: 0,
     position: 0,
     successfulRolls: 0,
@@ -123,15 +140,36 @@ const reduceGameState = (turns, stage_size) => {
   })
 }
 
+const reduceActiveGameStateByUser = async (db, userId) => {
+  const activeGameId = await getActiveGameIdByUser(db, userId)
+  const gameState = await reduceGameStateByGame(db, activeGameId);
+  return gameState;
+}
+
+const makeActiveGameUsedCardPileByUser = async (db, userId, skipCard = false) => {
+  const turns = await getActiveGameTurnsByUser(db, userId)
+
+  return turns.reduce((total, currTurn) => {
+    if (!currTurn.skip_attempt === skipCard) return total;
+    if (total.find(card => card === currTurn.id_card)) {
+      return [currTurn.id_card]
+    }
+    return [...total, currTurn.id_card]
+  }, [])
+}
+
 module.exports = {
-  getActiveGameTurnsByUser,
-  getActiveGameSettingsByUser,
   createNewGame,
-  checkGameIsActive,
+  getActiveGameSettingsByUser,
+  getGameSettingsByGame,
+  getActiveGameTurnsByUser,
   checkGameLastTurnByUser,
   getActiveGameIdByUser,
   flagGameLastTurnByUser,
   winActiveGameByUser,
-  reduceGameState,
-  getAllGameTurnsByUser
+  getAllGameTurnsByUser,
+  getAllGameIdsByUser,
+  reduceGameStateByGame,
+  reduceActiveGameStateByUser,
+  makeActiveGameUsedCardPileByUser
 }

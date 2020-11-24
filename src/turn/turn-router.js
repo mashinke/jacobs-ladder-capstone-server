@@ -72,8 +72,8 @@ turnRouter
       if (!lastTurn) {
         // check final position
         const gameSettings = await GameService.getActiveGameSettingsByUser(db, req.userId);
-        const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
-        let { position } = GameService.reduceGameState(gameTurns, gameSettings.stage_size)
+        const gameState = await GameService.reduceActiveGameStateByUser(db, req.userId);
+        let { position } = gameState;
 
         if (roll) position += roll;
         if (skip_success) position += gameSettings.stage_size;

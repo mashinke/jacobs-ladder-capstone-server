@@ -16,12 +16,12 @@ function shuffle(s) {
 gameRouter
   .route('/')
   .post(jsonBodyParser, async (req, res, next) => {
+    // console.log('POST game/')
     // here we are setting up a new game using settings from the client.
     const db = req.app.get('db');
     try {
       if (!req.body) return res.status(400).send();
       const { totalStages, hintLimit, maxHints } = req.body;
-      console.log(req.body)
       // Validation
       if (!totalStages) return res
         .status(400)
@@ -38,6 +38,7 @@ gameRouter
         hint_limit: hintLimit ? true : false,
         max_hints: maxHints
       })
+
       return res
         .status(201)
         .json({ gameId: newGameId })
@@ -49,12 +50,13 @@ gameRouter
 
     const response = {};
     const gameSettings = await GameService.getActiveGameSettingsByUser(db, req.userId);
-    if(!gameSettings) {
+    if (!gameSettings) {
       return res
         .status(200)
         .json({});
     }
-    const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
+
+    // const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
 
     // different naming schemes for db and API...
     const {
@@ -77,20 +79,19 @@ gameRouter
       ended
     };
 
-    const makeUsedPile = (skipCard = false) => gameTurns.reduce((total, currTurn) => {
-      if(!currTurn.skip_attempt === skipCard) return total;
-      if(total.find(card => card === currTurn.id_card)){
-        return [currTurn.id_card]
-      }
-      return [...total, currTurn.id_card]
-    },[])
-    const usedRollCards = makeUsedPile(false)
-    const usedSkipCards = makeUsedPile(true)      
+    // now we have what we need to reduce the game state
+    response.gameState =
+      await GameService.reduceActiveGameStateByUser(db, req.userId);
 
-    response.gameState = {};
+    response.gameState.turnNumber++;
+    
+    const usedSkipCards = 
+      await GameService.makeActiveGameUsedCardPileByUser(db, req.userId, true)
+
     let rC = null;
     // only do this on a regular turn
-    if (!response.gameState.lastTurn) {
+    if (!last_turn) {
+      const usedRollCards = await GameService.makeActiveGameUsedCardPileByUser(db, req.userId, false)
       rC = await cardService.getRandomCard(db, 1, usedRollCards);
     }
     // we get a skip card anyway
@@ -112,18 +113,6 @@ gameRouter
       questionText: sC.question_text,
       answers: sC.answers
     };
-
-    response.gameState.turnNumber = gameTurns.length + 1;
-
-    // Now if there have been turns already, put in the rest of the info
-
-    if (gameTurns.length !== 0) {
-      const roll = Math.floor(Math.random() * 10);
-
-      Object.assign(response.gameState,
-        GameService.reduceGameState(gameTurns, stage_size)
-      );
-    }
 
     return res
       .status(200)
