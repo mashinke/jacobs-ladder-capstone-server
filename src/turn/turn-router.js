@@ -44,9 +44,9 @@ turnRouter
       const skip_attempt = skipCard;
       const correctAnswer = await cardService.getAnswer(db, id_card);
       let last_turn = lastTurn;
-      let gameWon;
-      let roll;
-      let skip_success;
+      let gameWon = false;
+      let roll = null;
+      let skip_success = false;
 
       if (!lastTurn) {
         if (!use_hint) {
@@ -79,8 +79,6 @@ turnRouter
         if (skip_success) position += gameSettings.stage_size;
 
         const finalPosition = gameSettings.total_stages * gameSettings.stage_size;
-
-        console.log(position, finalPosition)
 
         if (position >= finalPosition) {
           await GameService.flagGameLastTurnByUser(db, req.userId)

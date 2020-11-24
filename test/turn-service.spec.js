@@ -4,7 +4,7 @@ const TurnService = require('../src/turn/turn-service');
 const knex = require('knex');
 const { expect } = require('chai');
 
-describe('Game service object', () => {
+describe('Turn service object', () => {
   let db;
   const testUsers = TestHelpers.createTestUsers();
   const testGames = TestHelpers.createTestGames();
@@ -43,12 +43,12 @@ describe('Game service object', () => {
         roll: 8,
         skip_attempt: false,
         use_hint: false,
-        id_card: 3
+        id_card: 3,
+        id_game: 1
       };
       turnId = await TurnService.createTurn(db, newTurn, gameId);
       const actual = await db('turn')
         .select('*')
-        .where('id', turnId)
         .first();
       expect(actual).to.include(newTurn)
     });
