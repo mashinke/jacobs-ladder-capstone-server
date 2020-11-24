@@ -14,6 +14,9 @@ describe('Game Endpoints', function () {
   const testQuestions = TestHelpers.createTestQuestions();
   const testAnswers = TestHelpers.createTestAnswers();
   const testTurns = TestHelpers.createTestTurns();
+  const auth = {
+    authorization: `bearer ${TestHelpers.generateJWT(testUsers[0])}`
+  }
 
   before('establish db connection', () => {
     db = knex({
@@ -41,50 +44,25 @@ describe('Game Endpoints', function () {
       )
     );
 
-    it('with no request body, responds with 400', async function () {
-      response = await supertest(app)
-        .post('/api/game')
-        .expect(400)
-    })
-
-    it('with gameLength missing, returns 400', async () => {
+    it('with invalid data, responds with 400', async function () {
       const requestBody = {
-        hintLimited: false,
+        hintLimit: false,
       };
-      const result = await supertest(app)
+      await supertest(app)
         .post('/api/game')
+        .set(auth)
         .send(requestBody)
         .expect(400);
     })
-    it('with both hintLimited and hintLimit missing, returns 400', async () => {
+    it('with valid data, creates a game and response with 201 and responds with game location', async function () {
       const requestBody = {
-        gameLength: 6
-      }
-      const result = await supertest(app)
-        .post('/api/game')
-        .send(requestBody)
-        .expect(400)
-    })
-    it('with invalid hintLimit, returns 400', async () => {
-      const requestBody = {
-        gameLength: 6,
-        hintLimited: true,
-        hintLimit: -1
-      }
-
-      const result = await supertest(app)
-        .post('/api/game')
-        .send(requestBody)
-        .expect(400);
-    })
-    it.only('with valid request, creates a game and response with 201 and responds with game location', async function () {
-      const requestBody = {
-        gameLength: 6,
-        hintLimited: true,
-        hintLimit: 18
+        totalStages: 6,
+        maxHints: 18,
+        hintLimit: true
       }
       response = await supertest(app)
         .post('/api/game')
+        .set(auth)
         .send(requestBody)
         .expect(201)
       const gameId = response.body.gameId;
@@ -96,19 +74,16 @@ describe('Game Endpoints', function () {
         total_stages: 6,
         max_hints: 18,
         hint_limit: true,
+        last_turn: false,
         ended: false,
         id_user: 1 // for now, default to id_user = 1
       }
 
-      console.log('res.body', response.body)
       const actual = await db('game')
         .select('*')
         .where('id', gameId)
         .first();
-      console.log(actual)
       expect(actual).to.eql(expected);
-      const allGames = await db('game').select('*')
-      console.log(allGames)
     });
   });
   describe('GET /api/game', () => {
@@ -123,25 +98,41 @@ describe('Game Endpoints', function () {
         testTurns
       );
 
-
-      const userId = 1 // temporary default
-      const game = testGames.filter(game => game.id_user === userId)[0]
-      const gameId = game.id;
-      const maxHints = game.max_hints;
-      const totalStages = game.total_stages;
-      const stageSize = 18 // temporary default
-
-      const gameSettings = {
-        gameId,
-        maxHints,
-        totalStages,
-        stageSize
-      }
-
       const response = await supertest(app)
         .get('/api/game')
+        .set(auth)
         .expect(200)
-      console.log(response.body)
-    })
-  })
+      
+      const { gameSettings, gameState, rollCard, skipCard } = response.body;
+
+      expect(gameSettings).to.be.an('object');
+      expect(gameState).to.be.an('object');
+      expect(rollCard).to.be.an('object');
+      expect(skipCard).to.be.an('object');
+      expect(gameSettings).to.include.keys(
+        'gameId',
+        'maxHints',
+        'hintLimit',
+        'totalStages',
+        'stageSize',
+        'lastTurn',
+        'ended');
+      expect(gameState).to.include.keys(
+        'hintsUsed',
+        'position',
+        'successfulRolls',
+        'totalRolls',
+        'successfulSkips',
+        'totalSkips'
+      );
+      [rollCard, skipCard].forEach(card => {
+        expect(card).to.include.keys(
+          'altText',
+          'questionText',
+          'answers'
+        );
+        expect(card.answers).to.be.an('array');
+      });
+    });
+  });
 });
