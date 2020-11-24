@@ -48,6 +48,30 @@ describe('Game service object', () => {
     });
   });
 
+  describe('getGameSettingsByGame', () => {
+    it('returns the correct game settings object', async () => {
+      await TestHelpers.seedFixtures(
+        db,
+        testUsers,
+        testGames,
+        testAnswers,
+        testQuestions,
+        testCards,
+        testTurns
+      );
+
+      const gameId = 1;
+
+      const expected = await db('game')
+        .where('id', gameId)
+        .first();
+      const actual = await GameService.getGameSettingsByGame(db, gameId);
+
+      expect(actual).to.be.an('object');
+      expect(actual).to.eql(expected);
+    });
+  });
+
   describe('getActiveGameSettingsByUser', () => {
     it('returns the correct game settings object', async () => {
       await TestHelpers.seedFixtures(
@@ -277,6 +301,57 @@ describe('Game service object', () => {
     });
   });
 
+  describe('getAllGamesByUser', () => {
+    it('returns an array of game id numbers', async () => {
+      await TestHelpers.seedFixtures(
+        db,
+        testUsers,
+        testGames,
+        testAnswers,
+        testQuestions,
+        testCards,
+        testTurns
+      );
+
+      const userId = 1;
+
+      const actual = await GameService.getAllGameIdsByUser(db, userId);
+
+      expect(actual).to.be.an('array');
+
+      actual.forEach(id => {
+        expect(Number(id)).to.be.a('number')
+      });
+    });
+  });
+
+  describe('reduceGameStateByGame', () => {
+    it('returns a game state object', async () => {
+      await TestHelpers.seedFixtures(
+        db,
+        testUsers,
+        testGames,
+        testAnswers,
+        testQuestions,
+        testCards,
+        testTurns
+      );
+
+      const gameId = 1;
+      const gameState = await GameService.reduceGameStateByGame(db, gameId);
+
+      expect(gameState).to.be.an('object');
+      expect(gameState).to.include.keys(
+        'hintsUsed',
+        'position',
+        'successfulRolls',
+        'totalRolls',
+        'successfulSkips',
+        'totalSkips'
+      );
+    });
+  });
+
   describe('reduceActiveGameStateByUser', () => {
     it('returns a game state object', async () => {
       await TestHelpers.seedFixtures(
@@ -323,32 +398,7 @@ describe('Game service object', () => {
       expect(stack).to.be.an('array');
       stack.forEach(card_id => {
         expect(card_id).to.be.a('number');
-      })
-    })
-  })
-
-  describe('getActiveGameTurnNumberByUser', () => {
-    it('returns the turn number', async () => {
-      await TestHelpers.seedFixtures(
-        db,
-        testUsers,
-        testGames,
-        testAnswers,
-        testQuestions,
-        testCards,
-        testTurns
-      );
-
-      const userId = 1;
-
-      const activeGameId = await GameService.getActiveGameIdByUser(db, userId);
-
-      const actual = await GameService.getActiveGameTurnNumberByUser(
-        db,
-        userId
-      );
-      
-      expect(Number(actual)).to.be.a('number');
+      });
     });
   });
 });
