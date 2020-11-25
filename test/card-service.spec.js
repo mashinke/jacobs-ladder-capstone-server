@@ -29,7 +29,7 @@ describe('Card service object', () => {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
   });
   describe('getRandomCard', () => {
-    it.only('returns a card object', async () => {
+    it('returns a card object', async () => {
       await TestHelpers.seedFixtures(
         db,
         testUsers,
@@ -57,7 +57,7 @@ describe('Card service object', () => {
     })
   })
 
-  describe.only('getAnswer', () => {
+  describe('getAnswer', () => {
     it('returns the correct answer text for a give question', async () => {
       await TestHelpers.seedFixtures(
         db,
@@ -74,14 +74,14 @@ describe('Card service object', () => {
       const expected = testAnswers[testCards[cardId - 1]
         .id_answer - 1]
         .answer_text;
-        
+
       const answer = await CardService.getAnswer(db, cardId);
 
       expect(answer).to.eql(expected);
     });
   });
 
-  describe.only('makeActiveGameUsedCardPileByUser', () => {
+  describe('makeActiveGameUsedCardPileByUser', () => {
     it('returns an array of card id numbers', async () => {
       await TestHelpers.seedFixtures(
         db,

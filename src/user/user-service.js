@@ -15,7 +15,6 @@ const checkEmailTaken = async (db, email) => {
     .count('id')
     .where({ email })
     .first();
-  console.log(!!parseInt(response.count))
   return !!parseInt(response.count);
 }
 module.exports = { registerUser, checkEmailTaken }
