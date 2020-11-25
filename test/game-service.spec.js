@@ -378,27 +378,4 @@ describe('Game service object', () => {
       );
     });
   });
-
-  describe('makeActiveGameUsedCardPileByUser', () => {
-    it('returns an array of card id numbers', async () => {
-      await TestHelpers.seedFixtures(
-        db,
-        testUsers,
-        testGames,
-        testAnswers,
-        testQuestions,
-        testCards,
-        testTurns
-      );
-
-      const userId = 1;
-
-      const stack = await GameService.makeActiveGameUsedCardPileByUser(db, userId);
-
-      expect(stack).to.be.an('array');
-      stack.forEach(card_id => {
-        expect(card_id).to.be.a('number');
-      });
-    });
-  });
 });

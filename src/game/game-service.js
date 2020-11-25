@@ -146,17 +146,7 @@ const reduceActiveGameStateByUser = async (db, userId) => {
   return gameState;
 }
 
-const makeActiveGameUsedCardPileByUser = async (db, userId, skipCard = false) => {
-  const turns = await getActiveGameTurnsByUser(db, userId)
 
-  return turns.reduce((total, currTurn) => {
-    if (!currTurn.skip_attempt === skipCard) return total;
-    if (total.find(card => card === currTurn.id_card)) {
-      return [currTurn.id_card]
-    }
-    return [...total, currTurn.id_card]
-  }, [])
-}
 
 module.exports = {
   createNewGame,
@@ -171,5 +161,4 @@ module.exports = {
   getAllGameIdsByUser,
   reduceGameStateByGame,
   reduceActiveGameStateByUser,
-  makeActiveGameUsedCardPileByUser
 }

@@ -1,3 +1,5 @@
+const GameService = require('../game/game-service');
+
 function shuffle(s) {
   for (let i = s.length - 1; i > 0; i--) {
     r = Math.floor(Math.random() * i);
@@ -6,7 +8,9 @@ function shuffle(s) {
     s[i] = temp;
   }
 }
-const getRandomCard = async function (db, difficulty, used = []) {
+const getRandomCard = async function (db, userId, skipCard = false) {
+  const difficulty = skipCard ? 2 : 1; // for now hardcode just two
+  const used = await makeActiveGameUsedCardPileByUser(db, userId, skipCard)
   let allCards = await db('card')
     .select(
       'card.id', 
@@ -48,7 +52,20 @@ const getAnswer = async function (db, cardId) {
     return result.answer_text;
 }
 
+const makeActiveGameUsedCardPileByUser = async (db, userId, skipCard = false) => {
+  const turns = await GameService.getActiveGameTurnsByUser(db, userId)
+
+  return turns.reduce((total, currTurn) => {
+    if (!currTurn.skip_attempt === skipCard) return total;
+    if (total.find(card => card === currTurn.id_card)) {
+      return [currTurn.id_card]
+    }
+    return [...total, currTurn.id_card]
+  }, [])
+}
+
 module.exports = {
   getRandomCard,
-  getAnswer
+  getAnswer,
+  makeActiveGameUsedCardPileByUser
 }
