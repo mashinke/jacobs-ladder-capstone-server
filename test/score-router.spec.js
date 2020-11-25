@@ -4,7 +4,7 @@ const supertest = require('supertest');
 const app = require('../src/app');
 const TestHelpers = require('./test-helpers');
 
-describe('Turn Endpoints', function () {
+describe('Score Endpoints', function () {
   let db;
 
   const testUsers = TestHelpers.createTestUsers();
@@ -34,9 +34,9 @@ describe('Turn Endpoints', function () {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
   });
 
-  describe('POST /api/turn', () => {
+  describe('GET /api/score', () => {
 
-    it('with invalid data, responds with 400', async function () {
+    it('responds with 200 and array of scores', async function () {
       await TestHelpers.seedFixtures(
         db,
         testUsers,
@@ -46,47 +46,32 @@ describe('Turn Endpoints', function () {
         testCards,
         testTurns
       );
-      const requestBody = {
-        foo: false,
-      };
-      await supertest(app)
-        .post('/api/turn')
-        .set(auth)
-        .send(requestBody)
-        .expect(400);
-    })
-    it('with valid data, creates a turn and responds with 200 and turn object', async function () {
-      await TestHelpers.seedFixtures(
-        db,
-        testUsers,
-        testGames,
-        testAnswers,
-        testQuestions,
-        testCards,
-        testTurns
-      );
-
-      const requestBody = {
-        cardId: 1,
-        answer: 'alef',
-        skipCard: false,
-        useHint: false
-      }
+      
       const responseBody = await supertest(app)
-        .post('/api/turn')
+        .get('/api/score')
         .set(auth)
-        .send(requestBody)
         .expect(200)
-        .then(res => res.body)
+        .then(res => res.body);
+      
+        expect(responseBody).to.be.an('array');
 
-      expect (responseBody).to.have.keys(
-        'roll',
-        'correctAnswer',
-        'useHint',
-        'lastTurn',
-        'skipSuccess',
-        'gameWon'
-      )
+        responseBody.forEach(score => {
+          expect(score).to.be.an('object');
+          expect(score).to.include.keys(
+            'ended',
+            'stageSize',
+            'totalStages',
+            'hintsUsed',
+            'maxHints',
+            'hintLimit',
+            'successfulRolls',
+            'totalRolls',
+            'successfulSkips',
+            'totalSkips',
+            'position',
+            'turnNumber'
+          );
+        });
     });
   });
 });

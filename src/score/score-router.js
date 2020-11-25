@@ -38,7 +38,7 @@ scoreRouter
             stageSize: stage_size,
             totalStages: total_stages,
             hintsUsed,
-            maxHints: hint_limit ? max_hints : undefined,
+            maxHints: hint_limit ? max_hints : null,
             hintLimit: hint_limit,
             successfulRolls,
             totalRolls,
