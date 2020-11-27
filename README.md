@@ -11,56 +11,73 @@ RESTFul API server. To learn more about the game, please visit the
 
 ## Data Schema
 
-### Gameplay
-
-### Game
+### game
+- id: `int`
+- active: `bool`
 - stage_size: `int`
 - total_stages: `int`
 - hint_limit: `bool`
-- max_hints: `int` or `null`
+- max_hints: `int`
 - ended: `bool`
+- last_turn: `bool`
+- id_user: `int:fk`
 
-### Turn
+### turn
+- id: `int`
 - roll: `int` or `null`
-- skip: `bool`
-- time_elapsed: `time`
+- skip_attempt: `bool`
+- skip_success: `bool`
 - use_hint: `bool`
 - id_game: `int:fk`
-- id_question: `int:fk`
+- id_card: `int:fk`
 
-### Card
-- image_url: `text`
-- alt_text: `text`
-
-### Question
-- question_text: `text`
+### card
+- id: `int`
 - difficulty: `int`
-- type: `enum`
-- id_answer: `int:fk
-- id_card: `int:fk`
+- id_question: `int:fk`
+- id_answer: `int:fk`
 
-### Answer
+### question
+- id: `int`
+- question_text: `text`
+
+### answer
+- id: `int`
 - answer_text: `text`
-- id_card: `int:fk`
 
-## API Communication
+### app_user
+- id: `int`
+- email: `text`
+- password: `text` (encrypted)
 
-### Game start
-- POST /game `{ ruleset: {...} }`
-- GET /game `{ game: {....}, roll_card: {...}, skip_card: {...} }`
+## API Documentation
 
-### Game middle
-- GET /game `{ game_state: {....}, roll_card: {...}, skip_card: {...} }`
-- POST /turn `{ roll_card: {...} || skip_card: {...}, time_elapsed: '...' }`
+### POST /api/auth
 
-### Last turn
-- GET /game `{ game: {...}, final_card: {...}, last_turn: true }`
-- POST /turn `{ final_card: {...}, time_elapsed: '...' }`
+#### Authenticates login and provides JSON Web Token.
+_Requires a request body._
 
-### Game end
-- GET /game `{ game: { ended: true, ... } }`
+| key | Value |
+| :--- | -----: |
+| email | _string, required_ |
+| password | _string, required_ |
 
-### Resources
-- POST /game
-- POST /turn
-- GET /game
+#### Example response:
+
+```
+HTTP STATUS 200 OK
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwaXJlc0luIjoiN2QiLCJpYXQiOjE2MDUyMjA3MzUsInN1YiI6InRlc3RAZXhhbXBsZS5uZXQifQ.OAzmBM8JUOx3dxnyl1ledSp5sSIekTvsUJeC5hhSJus"
+  }
+```
+
+
+Status 200
+
+### /api/game
+
+### /api/score
+
+### /api/turn
+
+### /api/user
