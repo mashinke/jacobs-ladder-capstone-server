@@ -31,8 +31,8 @@ gameRouter
       })
 
       return res
-        .status(201)
-        .json({ gameId: newGameId })
+        .status(200)
+        .send();
     }
     catch (err) { next(err) }
   })
