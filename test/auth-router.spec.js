@@ -36,7 +36,7 @@ describe('Auth Endpoints', function () {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
   });
 
-  describe.only('POST /api/auth', () => {
+  describe('POST /api/auth', () => {
     const userEmail = 'one@two.com';
     const userPass = 'password';
 

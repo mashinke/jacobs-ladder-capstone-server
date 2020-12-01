@@ -53,7 +53,9 @@ describe('Game Endpoints', function () {
         .send(requestBody)
         .expect(400);
     })
-    it('with valid data, creates a game and response with 201 and responds with game location', async function () {
+    it('with valid data, creates a game and response with 200', async function () {
+      const numberOfGamesBefore = await db('game')
+        .count().first().then(row => Number(row.count))
       const requestBody = {
         totalStages: 6,
         maxHints: 18,
@@ -63,26 +65,12 @@ describe('Game Endpoints', function () {
         .post('/api/game')
         .set(auth)
         .send(requestBody)
-        .expect(201)
+        .expect(200)
       const gameId = response.body.gameId;
-
-      const expected = {
-        id: gameId,
-        active: true,
-        stage_size: 18,
-        total_stages: 6,
-        max_hints: 18,
-        hint_limit: true,
-        last_turn: false,
-        ended: false,
-        id_user: 1 // for now, default to id_user = 1
-      }
-
-      const actual = await db('game')
-        .select('*')
-        .where('id', gameId)
-        .first();
-      expect(actual).to.eql(expected);
+      
+      const numberOfGamesAfter = await db('game')
+        .count().first().then(row => Number(row.count))
+      expect(numberOfGamesBefore).to.eql(numberOfGamesAfter - 1);
     });
   });
   describe('GET /api/game', () => {
