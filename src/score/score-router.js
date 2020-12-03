@@ -1,13 +1,13 @@
 const express = require('express');
-const GameService = require('../game/game-service')
+const GameService = require('../game/game-service');
 const scoreRouter = express.Router();
 
 scoreRouter
   .route('/')
   .get(async (req, res, next) => {
     try {
-      const db = req.app.get('db')
-      const gameIds = await GameService.getAllGameIdsByUser(db, req.userId)
+      const db = req.app.get('db');
+      const gameIds = await GameService.getAllGameIdsByUser(db, req.userId);
 
       const scores = await Promise.all(
         gameIds.map(async currentGameId => {
@@ -46,7 +46,7 @@ scoreRouter
             totalSkips,
             position,
             turnNumber
-          }
+          };
         })
       );
 
@@ -55,8 +55,8 @@ scoreRouter
         .json(scores);
 
     } catch (error) {
-      next(error)
+      next(error);
     }
-  })
+  });
 
 module.exports = scoreRouter;

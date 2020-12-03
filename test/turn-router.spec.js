@@ -15,14 +15,14 @@ describe('Turn Endpoints', function () {
   const testTurns = TestHelpers.createTestTurns();
   const auth = {
     authorization: `bearer ${TestHelpers.generateJWT(testUsers[0])}`
-  }
+  };
 
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
       connection: process.env.TEST_DATABASE_URL
     });
-    app.set('db', db)
+    app.set('db', db);
   });
   before('ensure test db is empty', () => {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
@@ -54,7 +54,7 @@ describe('Turn Endpoints', function () {
         .set(auth)
         .send(requestBody)
         .expect(400);
-    })
+    });
     it('with valid data, creates a turn and responds with 200 and turn object', async function () {
       await TestHelpers.seedFixtures(
         db,
@@ -71,13 +71,13 @@ describe('Turn Endpoints', function () {
         answer: 'alef',
         skipCard: false,
         useHint: false
-      }
+      };
       const responseBody = await supertest(app)
         .post('/api/turn')
         .set(auth)
         .send(requestBody)
         .expect(200)
-        .then(res => res.body)
+        .then(res => res.body);
 
       expect (responseBody).to.have.keys(
         'roll',
@@ -86,7 +86,7 @@ describe('Turn Endpoints', function () {
         'lastTurn',
         'skipSuccess',
         'gameWon'
-      )
+      );
     });
   });
 });

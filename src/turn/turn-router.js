@@ -7,7 +7,7 @@ const jsonBodyParser = express.json();
 const turnRouter = express.Router();
 
 function rollDie() {
-  return Math.ceil(Math.random() * 10)
+  return Math.ceil(Math.random() * 10);
 }
 
 turnRouter
@@ -19,14 +19,15 @@ turnRouter
 
       const { cardId, answer, skipCard, useHint } = req.body;
 
-      let lastTurn = await GameService.checkGameLastTurnByUser(db, req.userId)
+      let lastTurn = await GameService.checkGameLastTurnByUser(db, req.userId);
 
       if (!lastTurn) {
         // validate
         if (!cardId) return res.status(400).json({ message: 'cardId required' });
         if (skipCard && !answer) {
-          return
-          res.status(400).json({ message: 'answer required for skipCard' });
+          return res
+            .status(400)
+            .json({ message: 'answer required for skipCard' });
         }
         if (!useHint && !answer)
           return res.status(400).json({ message: 'either hint or answer required' });
@@ -35,7 +36,7 @@ turnRouter
       }
 
       // get the active game
-      const id_game = await gameService.getActiveGameIdByUser(db, req.userId)
+      const id_game = await gameService.getActiveGameIdByUser(db, req.userId);
 
 
       // build turn object
@@ -43,7 +44,6 @@ turnRouter
       const use_hint = useHint;
       const skip_attempt = skipCard;
       const correctAnswer = await cardService.getAnswer(db, id_card);
-      let last_turn = lastTurn;
       let gameWon = false;
       let roll = null;
       let skip_success = false;
@@ -81,7 +81,7 @@ turnRouter
         const finalPosition = gameSettings.total_stages * gameSettings.stage_size;
 
         if (position >= finalPosition) {
-          await GameService.flagGameLastTurnByUser(db, req.userId)
+          await GameService.flagGameLastTurnByUser(db, req.userId);
           lastTurn = true;
         }
       }
@@ -93,7 +93,7 @@ turnRouter
         use_hint,
         id_card,
         id_game
-      }
+      };
       await TurnService.createTurn(db, turn);
 
       return res.status(200).json({
@@ -105,7 +105,7 @@ turnRouter
         gameWon
       });
     }
-    catch (err) { next(err) }
-  })
+    catch (err) { next(err); }
+  });
 
 module.exports = turnRouter;

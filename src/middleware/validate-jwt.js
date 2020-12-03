@@ -12,13 +12,13 @@ async function validateJWT(req, res, next) {
     const { sub: email } = jwt.verify(token, config.JWT_SECRET);
     const db = req.app.get('db');
     const result = await db('app_user')
-      .select('id').where({ email }).first()
+      .select('id').where({ email }).first();
     if (!result) return res
-      .status(401).json({ message: 'invalid credentials' })
+      .status(401).json({ message: 'invalid credentials' });
     req.userId = result.id;
     next();
   } catch(error) {
-    next(error)
+    next(error);
   }
   
 }

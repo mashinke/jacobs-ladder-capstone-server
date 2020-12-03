@@ -15,14 +15,14 @@ describe('Score Endpoints', function () {
   const testTurns = TestHelpers.createTestTurns();
   const auth = {
     authorization: `bearer ${TestHelpers.generateJWT(testUsers[0])}`
-  }
+  };
 
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
       connection: process.env.TEST_DATABASE_URL
     });
-    app.set('db', db)
+    app.set('db', db);
   });
   before('ensure test db is empty', () => {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
@@ -53,25 +53,25 @@ describe('Score Endpoints', function () {
         .expect(200)
         .then(res => res.body);
       
-        expect(responseBody).to.be.an('array');
+      expect(responseBody).to.be.an('array');
 
-        responseBody.forEach(score => {
-          expect(score).to.be.an('object');
-          expect(score).to.include.keys(
-            'ended',
-            'stageSize',
-            'totalStages',
-            'hintsUsed',
-            'maxHints',
-            'hintLimit',
-            'successfulRolls',
-            'totalRolls',
-            'successfulSkips',
-            'totalSkips',
-            'position',
-            'turnNumber'
-          );
-        });
+      responseBody.forEach(score => {
+        expect(score).to.be.an('object');
+        expect(score).to.include.keys(
+          'ended',
+          'stageSize',
+          'totalStages',
+          'hintsUsed',
+          'maxHints',
+          'hintLimit',
+          'successfulRolls',
+          'totalRolls',
+          'successfulSkips',
+          'totalSkips',
+          'position',
+          'turnNumber'
+        );
+      });
     });
   });
 });

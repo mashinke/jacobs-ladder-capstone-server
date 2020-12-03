@@ -1,9 +1,7 @@
-// const TurnService = require('../src/game/turn-service');
 const TestHelpers = require('./test-helpers');
 const CardService = require('../src/card/card-service');
 const knex = require('knex');
 const { expect } = require('chai');
-const supertest = require('supertest');
 
 describe('Card service object', () => {
   let db;
@@ -53,9 +51,9 @@ describe('Card service object', () => {
       expect(card.answers).to.be.an('array');
       card.answers.forEach(answer => {
         expect(answer).to.be.a('string');
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('getAnswer', () => {
     it('returns the correct answer text for a give question', async () => {
@@ -69,7 +67,7 @@ describe('Card service object', () => {
         testTurns
       );
 
-      cardId = 1;
+      const cardId = 1;
 
       const expected = testAnswers[testCards[cardId - 1]
         .id_answer - 1]

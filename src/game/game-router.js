@@ -24,86 +24,89 @@ gameRouter
         .status(400)
         .json({ message: 'negative numbers not allowed for maxHints' });
 
-      const newGameId = await GameService.createNewGame(db, req.userId, {
+      await GameService.createNewGame(db, req.userId, {
         total_stages: totalStages,
         hint_limit: hintLimit ? true : false,
         max_hints: maxHints
-      })
+      });
 
       return res
         .status(200)
         .send();
     }
-    catch (err) { next(err) }
+    catch (err) { next(err); }
   })
   .get(async (req, res, next) => {
-    const db = req.app.get('db')
+    const db = req.app.get('db');
 
     const response = {};
-    const gameSettings = await GameService.getActiveGameSettingsByUser(db, req.userId);
-    if (!gameSettings) {
+    try {
+      const gameSettings = await GameService.getActiveGameSettingsByUser(db, req.userId);
+      if (!gameSettings) {
+        return res
+          .status(200)
+          .json({});
+      }
+
+      // const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
+
+      // different naming schemes for db and API...
+      const {
+        id,
+        max_hints,
+        hint_limit,
+        total_stages,
+        stage_size,
+        last_turn,
+        ended
+      } = gameSettings;
+
+      response.gameSettings = {
+        gameId: id,
+        maxHints: max_hints,
+        hintLimit: hint_limit,
+        totalStages: total_stages,
+        stageSize: stage_size,
+        lastTurn: last_turn,
+        ended
+      };
+
+      // now we have what we need to reduce the game state
+      response.gameState =
+        await GameService.reduceActiveGameStateByUser(db, req.userId);
+
+      response.gameState.turnNumber++;
+
+      let rC = null;
+      // only do this on a regular turn
+      if (!last_turn) {
+        rC = await CardService.getRandomCard(db, req.userId, false);
+      }
+      // we get a skip card anyway
+      const sC = await CardService.getRandomCard(db, req.userId, true);
+
+      // different naming schemes...
+      if (!last_turn) {
+        response.rollCard = {
+          id: rC.id,
+          altText: rC.alt_text,
+          questionText: rC.question_text,
+          answers: rC.answers
+        };
+      }
+
+      response.skipCard = {
+        id: sC.id,
+        altText: sC.alt_text,
+        questionText: sC.question_text,
+        answers: sC.answers
+      };
+
       return res
         .status(200)
-        .json({});
+        .json(response);
     }
-
-    // const gameTurns = await GameService.getActiveGameTurnsByUser(db, req.userId);
-
-    // different naming schemes for db and API...
-    const {
-      id,
-      max_hints,
-      hint_limit,
-      total_stages,
-      stage_size,
-      last_turn,
-      ended
-    } = gameSettings;
-
-    response.gameSettings = {
-      gameId: id,
-      maxHints: max_hints,
-      hintLimit: hint_limit,
-      totalStages: total_stages,
-      stageSize: stage_size,
-      lastTurn: last_turn,
-      ended
-    };
-
-    // now we have what we need to reduce the game state
-    response.gameState =
-      await GameService.reduceActiveGameStateByUser(db, req.userId);
-
-    response.gameState.turnNumber++;
-    
-    let rC = null;
-    // only do this on a regular turn
-    if (!last_turn) {
-      rC = await CardService.getRandomCard(db, req.userId, false);
-    }
-    // we get a skip card anyway
-    const sC = await CardService.getRandomCard(db, req.userId, true);
-
-    // different naming schemes...
-    if (!last_turn) {
-      response.rollCard = {
-        id: rC.id,
-        altText: rC.alt_text,
-        questionText: rC.question_text,
-        answers: rC.answers
-      };
-    };
-
-    response.skipCard = {
-      id: sC.id,
-      altText: sC.alt_text,
-      questionText: sC.question_text,
-      answers: sC.answers
-    };
-
-    return res
-      .status(200)
-      .json(response);
-  })
+    catch (err) { next(err); }
+  });
 
 module.exports = gameRouter;

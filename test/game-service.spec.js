@@ -3,8 +3,6 @@ const TestHelpers = require('./test-helpers');
 const knex = require('knex');
 const { expect } = require('chai');
 const { seedFixtures } = require('./test-helpers');
-const app = require('../src/app');
-const { getActiveGameIdByUser, flagGameLastTurnByUser, checkGameLastTurnByUser, winActiveGameByUser, reduceGameState } = require('../src/game/game-service');
 
 describe('Game service object', () => {
   let db;
@@ -38,7 +36,7 @@ describe('Game service object', () => {
         total_stages: 6,
         hint_limit: true,
         max_hints: 3
-      }
+      };
       const gameId = await GameService.createNewGame(db, userId, newGame);
       const actual = await db('game')
         .select('*')
@@ -119,12 +117,12 @@ describe('Game service object', () => {
         .where('id_game', activeGame.id)
         .count()
         .first()
-        .then(obj => Number(obj.count))
+        .then(obj => Number(obj.count));
 
       const actual = await GameService.getActiveGameTurnsByUser(db, userId);
 
       expect(actual).to.be.an('array');
-      expect(actual.length).to.eql(activeGameTurnCount)
+      expect(actual.length).to.eql(activeGameTurnCount);
 
       actual.forEach(turn => {
         expect(turn).to.be.an('object');
@@ -153,7 +151,7 @@ describe('Game service object', () => {
         testTurns
       );
 
-      const userId = 1
+      const userId = 1;
       const expected = await db('game')
         .select('last_turn')
         .where('id_user', userId)
@@ -180,15 +178,15 @@ describe('Game service object', () => {
         testTurns
       );
 
-      const userId = 1
+      const userId = 1;
       const actual = await GameService.getActiveGameIdByUser(db, userId);
-      const game = await GameService.getActiveGameSettingsByUser(db, userId)
+      const game = await GameService.getActiveGameSettingsByUser(db, userId);
 
       expect(actual).to.be.a('number');
-      expect(actual).to.eql(game.id)
+      expect(actual).to.eql(game.id);
     });
   });
-  
+
   describe('flagGameLastTurnByUser', () => {
     it('flags a game as being on its last turn', async () => {
       await TestHelpers.seedFixtures(
@@ -203,16 +201,16 @@ describe('Game service object', () => {
 
       const userId = 1;
 
-      const before = await checkGameLastTurnByUser(db, userId);
+      const before = await GameService.checkGameLastTurnByUser(db, userId);
       expect(before).to.eql(false); // to make sure the change happens
 
-      await flagGameLastTurnByUser(db, userId);
+      await GameService.flagGameLastTurnByUser(db, userId);
 
-      const actual = await checkGameLastTurnByUser(db, userId);
+      const actual = await GameService.checkGameLastTurnByUser(db, userId);
       expect(actual).to.eql(true);
     });
   });
-  
+
   describe('winActiveGameByUser', () => {
     it('flags game as ended', async () => {
       await TestHelpers.seedFixtures(
@@ -266,7 +264,7 @@ describe('Game service object', () => {
         userId
       );
 
-      expect(allGames).to.be.an('object')
+      expect(allGames).to.be.an('object');
 
       const gameCount = await db('game')
         .count()
@@ -283,7 +281,7 @@ describe('Game service object', () => {
           .where({ id_game: currGameId })
           .first()
           .then(obj => Number(obj.count));
-        expect(currGameTurns.length).to.eql(currentGameTurnCount)
+        expect(currGameTurns.length).to.eql(currentGameTurnCount);
 
         currGameTurns.forEach(turn => {
           expect(turn).to.be.an('object');
@@ -320,7 +318,7 @@ describe('Game service object', () => {
       expect(actual).to.be.an('array');
 
       actual.forEach(id => {
-        expect(Number(id)).to.be.a('number')
+        expect(Number(id)).to.be.a('number');
       });
     });
   });

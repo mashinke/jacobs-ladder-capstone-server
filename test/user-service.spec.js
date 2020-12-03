@@ -1,10 +1,8 @@
-// const TurnService = require('../src/game/turn-service');
 const TestHelpers = require('./test-helpers');
 const UserService = require('../src/user/user-service');
 const knex = require('knex');
 const bcrypt = require('bcrypt');
 const { expect } = require('chai');
-const supertest = require('supertest');
 
 describe('User service object', () => {
   let db;
@@ -48,10 +46,10 @@ describe('User service object', () => {
         db,
         testUsers);
       const usedEmail = await UserService.checkEmailTaken(db, testUsers[0].email);
-      const unusedEmail = await UserService.checkEmailTaken(db, 'unused@email.net')
+      const unusedEmail = await UserService.checkEmailTaken(db, 'unused@email.net');
       expect(usedEmail).to.be.true;
       expect(unusedEmail).to.be.false;
-    })
-  })
+    });
+  });
 });
 

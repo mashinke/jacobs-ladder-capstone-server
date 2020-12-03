@@ -15,14 +15,14 @@ describe('Game Endpoints', function () {
   const testTurns = TestHelpers.createTestTurns();
   const auth = {
     authorization: `bearer ${TestHelpers.generateJWT(testUsers[0])}`
-  }
+  };
 
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
       connection: process.env.TEST_DATABASE_URL
     });
-    app.set('db', db)
+    app.set('db', db);
   });
   before('ensure test db is empty', () => {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
@@ -52,24 +52,23 @@ describe('Game Endpoints', function () {
         .set(auth)
         .send(requestBody)
         .expect(400);
-    })
+    });
     it('with valid data, creates a game and response with 200', async function () {
       const numberOfGamesBefore = await db('game')
-        .count().first().then(row => Number(row.count))
+        .count().first().then(row => Number(row.count));
       const requestBody = {
         totalStages: 6,
         maxHints: 18,
         hintLimit: true
-      }
-      response = await supertest(app)
+      };
+      await supertest(app)
         .post('/api/game')
         .set(auth)
         .send(requestBody)
-        .expect(200)
-      const gameId = response.body.gameId;
-      
+        .expect(200);
+
       const numberOfGamesAfter = await db('game')
-        .count().first().then(row => Number(row.count))
+        .count().first().then(row => Number(row.count));
       expect(numberOfGamesBefore).to.eql(numberOfGamesAfter - 1);
     });
   });
@@ -88,8 +87,8 @@ describe('Game Endpoints', function () {
       const response = await supertest(app)
         .get('/api/game')
         .set(auth)
-        .expect(200)
-      
+        .expect(200);
+
       const { gameSettings, gameState, rollCard, skipCard } = response.body;
 
       expect(gameSettings).to.be.an('object');

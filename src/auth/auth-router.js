@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const AuthService = require('./auth-service');
 
 const authRouter = express.Router();
@@ -23,13 +22,13 @@ authRouter
       if (token) {
         return res
           .status(200)
-          .json({ token })
+          .json({ token });
       }
       return res
         .status(401)
-        .json({ message: 'invalid credentials' })
+        .json({ message: 'invalid credentials' });
     } catch (error) {
-      next(error)
+      next(error);
     }
   });
 

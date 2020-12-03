@@ -7,7 +7,7 @@ async function authenticateLogin(db, email, password) {
     const user = await db('app_user')
       .select()
       .where({ email })
-      .first()
+      .first();
     if (!user) return null;
     const { password = '' } = user;
     return bcrypt.compare(clearPass, password)
@@ -15,19 +15,19 @@ async function authenticateLogin(db, email, password) {
         if (valid) return user;
       });
   }
-  user = await validateUserPass(email, password);
-  if(user) {
+  const user = await validateUserPass(email, password);
+  if (user) {
     const { id, email } = user;
-    return generateJWT(email, id)
+    return generateJWT(email, id);
   }
 }
 
 function generateJWT(email, id) {
   return jwt.sign(
-    {id, expiresIn: '7d'},
-    config.JWT_SECRET, 
-    { 
-      subject: email, 
+    { id, expiresIn: '7d' },
+    config.JWT_SECRET,
+    {
+      subject: email,
       algorithm: 'HS256'
     });
 }

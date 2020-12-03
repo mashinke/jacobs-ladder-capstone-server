@@ -1,4 +1,3 @@
-const { expect } = require('chai');
 const knex = require('knex');
 const supertest = require('supertest');
 const app = require('../src/app');
@@ -8,21 +7,16 @@ describe('User Endpoints', function () {
   let db;
 
   const testUsers = TestHelpers.createTestUsers();
-  const testGames = TestHelpers.createTestGames();
-  const testCards = TestHelpers.createTestCards();
-  const testQuestions = TestHelpers.createTestQuestions();
-  const testAnswers = TestHelpers.createTestAnswers();
-  const testTurns = TestHelpers.createTestTurns();
   const auth = {
     authorization: `bearer ${TestHelpers.generateJWT(testUsers[0])}`
-  }
+  };
 
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
       connection: process.env.TEST_DATABASE_URL
     });
-    app.set('db', db)
+    app.set('db', db);
   });
   before('ensure test db is empty', () => {
     return db.raw('truncate game, app_user, turn, card, question, answer restart identity cascade');
@@ -47,20 +41,20 @@ describe('User Endpoints', function () {
         .expect(400);
       await supertest(app)
         .post('/api/user')
-        .send({foo: 'bar'})
+        .send({ foo: 'bar' })
         .expect(400);
     });
-    
+
     it('with valid data, creates a user and responds with 200', async function () {
       const requestBody = {
         email: 'test@example.com',
         password: 'password'
-      }
-      const responseBody = await supertest(app)
+      };
+      await supertest(app)
         .post('/api/user')
         .set(auth)
         .send(requestBody)
-        .expect(200)
+        .expect(200);
     });
   });
 });

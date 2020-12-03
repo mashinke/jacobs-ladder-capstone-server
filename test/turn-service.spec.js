@@ -1,4 +1,3 @@
-// const TurnService = require('../src/game/turn-service');
 const TestHelpers = require('./test-helpers');
 const TurnService = require('../src/turn/turn-service');
 const knex = require('knex');
@@ -11,7 +10,6 @@ describe('Turn service object', () => {
   const testCards = TestHelpers.createTestCards();
   const testQuestions = TestHelpers.createTestQuestions();
   const testAnswers = TestHelpers.createTestAnswers();
-  const testTurns = TestHelpers.createTestTurns();
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
@@ -29,7 +27,6 @@ describe('Turn service object', () => {
   });
   describe('createTurn', () => {
     it('creates turn in database', async () => {
-      console.log('seed fixtures')
       await TestHelpers.seedFixtures(
         db,
         testUsers,
@@ -46,11 +43,11 @@ describe('Turn service object', () => {
         id_card: 3,
         id_game: 1
       };
-      turnId = await TurnService.createTurn(db, newTurn, gameId);
+      await TurnService.createTurn(db, newTurn, gameId);
       const actual = await db('turn')
         .select('*')
         .first();
-      expect(actual).to.include(newTurn)
+      expect(actual).to.include(newTurn);
     });
   });
 });
