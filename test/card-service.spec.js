@@ -49,6 +49,7 @@ describe('Card service object', () => {
         'answers'
       );
       expect(card.answers).to.be.an('array');
+      expect(card.answers.length).to.eql(3);
       card.answers.forEach(answer => {
         expect(answer).to.be.a('string');
       });
