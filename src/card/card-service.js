@@ -37,8 +37,9 @@ const getRandomCard = async function (db, userId, skipCard = false) {
 
   shuffle(stack);
   // eslint-disable-next-line no-unused-vars
-  const { answer_text: _, ...card } = stack[0];
-  card.answers = stack.splice(0, 4).map(c => c.answer_text);
+  const { answer_text, ...card } = stack[0];
+  card.answers = stack.slice(1, 4).map(c => c.answer_text);
+  card.answers.push(answer_text);
   shuffle(card.answers);
   return card;
 };
