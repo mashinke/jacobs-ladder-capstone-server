@@ -8,6 +8,10 @@ Candyland, and originally conceived as a board game. This repository is for the
 RESTFul API server. To learn more about the game, please visit the 
 [client repository on GitHub](https://github.com/mashinke/jacobs-ladder-client).
 
+## Technology
+This project was developed with __Node.js__ + __Express.js__ + __Postgresql__ 
+on the back end, and __React__ on the front end. The server is deployed on 
+[Heroku](https://www.heroku.com/), and the client on [Vercel](https://vercel.com/).
 
 ## Data Schema
 
