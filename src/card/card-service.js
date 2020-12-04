@@ -9,6 +9,10 @@ function shuffle(s) {
   }
 }
 const getRandomCard = async function (db, userId, skipCard = false) {
+  // TODO: try this: create a getAllCards function, try to filter used cards in 
+  //the join statement, if there are less than 4 results run the query again
+  // without used cards?
+
   const difficulty = skipCard ? 2 : 1; // for now hardcode just two
   const used = await makeActiveGameUsedCardPileByUser(db, userId, skipCard);
   let allCards = await db('card')
@@ -29,14 +33,14 @@ const getRandomCard = async function (db, userId, skipCard = false) {
 
   let stack;
 
-  if (allCards.length !== used.length) {
+  if (allCards.length >= used.length + 4) {
     stack = allCards.filter(card => !used.includes(card.id));
   } else {
     stack = allCards;
   }
 
   shuffle(stack);
-  // eslint-disable-next-line no-unused-vars
+
   const { answer_text, ...card } = stack[0];
   card.answers = stack.slice(1, 4).map(c => c.answer_text);
   card.answers.push(answer_text);

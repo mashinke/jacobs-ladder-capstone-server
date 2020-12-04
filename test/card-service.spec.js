@@ -38,7 +38,7 @@ describe('Card service object', () => {
         testTurns
       );
 
-      const userId = 1;
+      const userId = 2;
 
       const card = await CardService.getRandomCard(db, userId);
       expect(card).to.be.an('object');
@@ -49,7 +49,7 @@ describe('Card service object', () => {
         'answers'
       );
       expect(card.answers).to.be.an('array');
-      expect(card.answers.length).to.eql(3);
+      expect(card.answers.length).to.eql(4);
       card.answers.forEach(answer => {
         expect(answer).to.be.a('string');
       });
