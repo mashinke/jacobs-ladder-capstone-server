@@ -11,7 +11,7 @@ describe('Auth Endpoints', function () {
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
-      connection: process.env.TEST_DATABASE_URL
+      connection: dbConnection
     });
     app.set('db', db);
   });

@@ -9,7 +9,7 @@ describe('Auth service object', () => {
   before('establish db connection', () => {
     db = knex({
       client: 'pg',
-      connection: process.env.TEST_DATABASE_URL
+      connection: dbConnection
     });
   });
   before('ensure test db is empty', () => {
