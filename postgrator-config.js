@@ -1,10 +1,21 @@
+const { config } = require('dotenv');
+
 require('dotenv').config();
 
-module.exports = {
+configObject = {
   migrationsDirectory: 'migrations',
   driver: 'pg',
-  connectionString: 
-  ( process.env.NODE_ENV === 'test' )
-    ? process.env.TEST_DATABASE_URL
-    : process.env.DATABASE_URL
 };
+
+if(process.env.DATABASE_URL){
+  configObject.connectionString = process.env.DATABASE_URL
+} else {
+  configObject.host = process.env.DB_HOST;
+  configObject.database = ( process.env.NODE_ENV === 'test' )
+    ? process.env.TEST_DB
+    : process.env.DB;
+  configObject.username = process.env.DB_USER;
+  configObject.password = process.env.DB_PASS;
+}
+
+module.exports = configObject;
