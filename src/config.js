@@ -26,6 +26,4 @@ configObject = {
   }
 }
 
-console.log(configObject);
-
 module.exports = configObject;
