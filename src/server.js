@@ -21,8 +21,5 @@ app.set(
   )
 );
 
-console.log(DB_CONNECTION);
-app.get('db').from('game').select('*').then(res => console.log(res)).catch(err => console.log(err));
-
 // eslint-disable-next-line no-console
 app.listen(PORT, () => console.log(`Server started in ${NODE_ENV} mode on ${PORT}...`));
