@@ -14,5 +14,8 @@ app.set(
   )
 );
 
+console.log(DB_CONNECTION);
+console.log(app.get('db'));
+
 // eslint-disable-next-line no-console
 app.listen(PORT, () => console.log(`Server started in ${NODE_ENV} mode on ${PORT}...`));
